@@ -8,6 +8,7 @@ import { PrimeVueResolver } from 'unplugin-vue-components/resolvers'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
+  base: '/gktools/',
   plugins: [
     vue(),
     Components({
