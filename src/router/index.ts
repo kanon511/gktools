@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
 
 const routes: RouteRecordRaw[] = [
     {
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const Router = createRouter({
-    history: createWebHistory('/gktools/'),
+    history: createWebHashHistory(),
     routes,
 });
 
