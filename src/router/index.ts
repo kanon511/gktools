@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const Router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory('/gktools/'),
     routes,
 });
 
