@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "tailwindcss-primeui";
+
+@import 'primeicons/primeicons';
+
+body {
+    margin: 0px;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: var(--body-bg);
+    font-weight: normal;
+    color: var(--body-text-color);
+    padding: 1rem;
+}
