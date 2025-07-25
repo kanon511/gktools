@@ -35,6 +35,10 @@
                         optionValue="id" optionDisabled="constant" :allowEmpty="false" fluid />
                     <p>试镜中得分</p>
                     <ParameterInput :parameters="scores" />
+                    <p>是否为一位</p>
+                    <SelectButton class="my-2" v-model="is_first_select" :options="is_first_options" optionLabel="name"
+                        optionValue="value" optionDisabled="constant" :allowEmpty="false" fluid />
+
                 </template>
             </Card>
         </div>
@@ -125,7 +129,7 @@
                         </TextCard>
                     </div>
                     <p class="text-4xl text-center mt-8 mb-4">最终评价：{{ final_score !== -1 ? final_score.toString() : '-'
-                    }}</p>
+                        }}</p>
                 </template>
             </Card>
             <p class="mt-4">
@@ -178,6 +182,12 @@ const scores = ref<{ [key: string]: number | null }>({
     visual: null,
 })
 
+const is_first_options = ref([
+    { name: '是', value: true },
+    { name: '否', value: false },
+])
+const is_first_select = ref(true)
+
 const base_increase_parameters = computed(() => {
     const value: { [key: string]: number } = { fans: 0 }
     for (const key of parameter_names) {
@@ -197,6 +207,9 @@ const base_increase_parameters = computed(() => {
         (stage.value as { [key: string]: any }).score_to_fans,
         value.fans
     ))
+    if (!is_first_select.value) {
+        value.fans = 0
+    }
     return value
 })
 
