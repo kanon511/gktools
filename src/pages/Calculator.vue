@@ -56,7 +56,60 @@
                             {{ increase_parameters.fans !== -1 ? '+' + increase_parameters.fans : '-' }}
                         </TextCard>
                     </div>
-                    <p>最终属性 (vo/da/vi/粉丝数)</p>
+                    <Panel header="获得属性详细" toggleable>
+                        <p>基础属性</p>
+                        <div class="flex flex-row mt-2">
+                            <TextCard theme="red">
+                                {{ base_increase_parameters.vocal !== -1 ? '+' + base_increase_parameters.vocal : '-' }}
+                            </TextCard>
+                            <TextCard theme="blue">
+                                {{ base_increase_parameters.dance !== -1 ? '+' + base_increase_parameters.dance : '-' }}
+                            </TextCard>
+                            <TextCard theme="yellow">
+                                {{ base_increase_parameters.visual !== -1 ? '+' + base_increase_parameters.visual : '-'
+                                }}
+                            </TextCard>
+                            <TextCard theme="green">
+                                {{ base_increase_parameters.fans !== -1 ? '+' + base_increase_parameters.fans : '-' }}
+                            </TextCard>
+                        </div>
+                        <p>属性加成属性</p>
+                        <div class="flex flex-row mt-2">
+                            <TextCard theme="red">
+                                {{ bonu_increase_parameters.vocal !== -1 ? '+' + bonu_increase_parameters.vocal : '-' }}
+                            </TextCard>
+                            <TextCard theme="blue">
+                                {{ bonu_increase_parameters.dance !== -1 ? '+' + bonu_increase_parameters.dance : '-' }}
+                            </TextCard>
+                            <TextCard theme="yellow">
+                                {{ bonu_increase_parameters.visual !== -1 ? '+' + bonu_increase_parameters.visual : '-'
+                                }}
+                            </TextCard>
+                            <TextCard theme="green">
+                                -
+                            </TextCard>
+                        </div>
+                        <p>初始道具加成属性</p>
+                        <div class="flex flex-row mt-2">
+                            <TextCard theme="red">
+                                {{ initial_item_bonu_increase_parameters.vocal !== -1 ? '+' +
+                                    initial_item_bonu_increase_parameters.vocal : '-' }}
+                            </TextCard>
+                            <TextCard theme="blue">
+                                {{ initial_item_bonu_increase_parameters.dance !== -1 ? '+' +
+                                    initial_item_bonu_increase_parameters.dance : '-' }}
+                            </TextCard>
+                            <TextCard theme="yellow">
+                                {{ initial_item_bonu_increase_parameters.visual !== -1 ? '+' +
+                                    initial_item_bonu_increase_parameters.visual : '-'
+                                }}
+                            </TextCard>
+                            <TextCard theme="green">
+                                -
+                            </TextCard>
+                        </div>
+                    </Panel>
+                    <p class="mt-4">最终属性 (vo/da/vi/粉丝数)</p>
                     <div class="flex flex-row mt-2">
                         <TextCard theme="red">
                             {{ final_parameters.vocal !== -1 ? final_parameters.vocal : '-' }}
@@ -72,7 +125,7 @@
                         </TextCard>
                     </div>
                     <p class="text-4xl text-center mt-8 mb-4">最终评价：{{ final_score !== -1 ? final_score.toString() : '-'
-                        }}</p>
+                    }}</p>
                 </template>
             </Card>
             <p class="mt-4">
@@ -144,6 +197,30 @@ const base_increase_parameters = computed(() => {
         (stage.value as { [key: string]: any }).score_to_fans,
         value.fans
     ))
+    return value
+})
+
+const bonu_increase_parameters = computed(() => {
+    const value: { [key: string]: number } = {}
+    for (const key of parameter_names) {
+        if (base_increase_parameters.value[key] === -1 || parameter_bonus.value[key] === null) {
+            value[key] = -1
+        } else {
+            value[key] = Math.floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
+        }
+    }
+    return value
+})
+
+const initial_item_bonu_increase_parameters = computed(() => {
+    const value: { [key: string]: number } = {}
+    for (const key of parameter_names) {
+        if (base_increase_parameters.value[key] === -1 || initial_item_bonus.value === null) {
+            value[key] = -1
+        } else {
+            value[key] = Math.floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
+        }
+    }
     return value
 })
 
