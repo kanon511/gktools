@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Avatar: typeof import('primevue/avatar')['default']
     Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']
@@ -25,5 +26,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SelectButton: typeof import('primevue/selectbutton')['default']
     TextCard: typeof import('./src/components/TextCard.vue')['default']
+    ThemeSwitcher: typeof import('./src/components/ThemeSwitcher.vue')['default']
+    Toolbar: typeof import('primevue/toolbar')['default']
   }
 }
