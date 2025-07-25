@@ -72,7 +72,7 @@
                         </TextCard>
                     </div>
                     <p class="text-4xl text-center mt-8 mb-4">最终评价：{{ final_score !== -1 ? final_score.toString() : '-'
-                    }}</p>
+                        }}</p>
                 </template>
             </Card>
         </div>
@@ -166,6 +166,9 @@ const final_parameters = computed(() => {
         }
         else {
             value[key] = parameters.value[key] + increase_parameters.value[key]
+            if (key !== 'fans') {
+                value[key] = Math.min(value[key], difficulty.value?.max_parameter ?? 0)
+            }
         }
     }
     return value
