@@ -8,9 +8,22 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Button: typeof import('primevue/button')['default']
+    Card: typeof import('primevue/card')['default']
+    FloatLabel: typeof import('primevue/floatlabel')['default']
+    IdolList: typeof import('./src/components/IdolList.vue')['default']
+    IdolSelect: typeof import('./src/components/IdolSelect.vue')['default']
+    InputNumber: typeof import('primevue/inputnumber')['default']
     Menubar: typeof import('primevue/menubar')['default']
-    MenuBar: typeof import('./src/components/Menu/MenuBar.vue')['default']
+    MenuBar: typeof import('./src/components/menu/MenuBar.vue')['default']
+    Panel: typeof import('primevue/panel')['default']
+    ParameterInput: typeof import('./src/components/parameter/ParameterInput.vue')['default']
+    ParameterMultipleInput: typeof import('./src/components/parameter/ParameterMultipleInput.vue')['default']
+    ParameterPercentageInput: typeof import('./src/components/ParameterPercentageInput.vue')['default']
+    PidolList: typeof import('./src/components/PidolList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SelectButton: typeof import('primevue/selectbutton')['default']
+    TextCard: typeof import('./src/components/TextCard.vue')['default']
   }
 }

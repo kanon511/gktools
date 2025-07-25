@@ -1,0 +1,24 @@
+[
+    {
+        "id": 1,
+        "name": "花海咲季",
+        "icon": "icons/1.png",
+        "type": "balance",
+        "specialty": {
+            "vocal": 3,
+            "dance": 2,
+            "visual": 1
+        }
+    },
+    {
+        "id": 2,
+        "name": "月村手毬",
+        "icon": "icons/1.png",
+        "type": "radical",
+        "specialty": {
+            "vocal": 1,
+            "dance": 3,
+            "visual": 2
+        }
+    }
+]
