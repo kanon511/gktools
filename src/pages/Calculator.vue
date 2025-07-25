@@ -10,6 +10,9 @@
                     <SelectButton class="my-2" v-model="difficulty_select" :options="difficulty_options"
                         optionLabel="name" optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <IdolSelect class="my-4" ref="idol_select_ref" />
+                    <p>强化周</p>
+                    <SelectButton class="my-2" v-model="is_enhanced_week" :options="boolean_options" optionLabel="name"
+                        optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <p>倍率</p>
                     <ParameterMultipleInput :parameters="parameter_bonus">
                         <FloatLabel class="ml-2" variant="on">
@@ -29,6 +32,10 @@
                                 :invalid="parameters.fans === null" fluid />
                             <label for="on_label">粉丝数</label>
                         </FloatLabel>
+                        <FloatLabel class="ml-2" variant="on" v-if="is_enhanced_week">
+                            <InputNumber v-model="star" :useGrouping="false" :invalid="star === null" fluid />
+                            <label for="on_label">星星数</label>
+                        </FloatLabel>
                     </ParameterInput>
                     <p>试验</p>
                     <SelectButton class="my-2" v-model="audition_select" :options="audition_options" optionLabel="name"
@@ -39,7 +46,7 @@
                     <p>试镜中得分</p>
                     <ParameterInput :parameters="scores" />
                     <p>是否为一位</p>
-                    <SelectButton class="my-2" v-model="is_first_select" :options="is_first_options" optionLabel="name"
+                    <SelectButton class="my-2" v-model="is_first" :options="boolean_options" optionLabel="name"
                         optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid />
 
                 </template>
@@ -132,7 +139,7 @@
                         </TextCard>
                     </div>
                     <p class="text-4xl text-center mt-8 mb-4">最终评价：{{ final_score !== -1 ? final_score.toString() : '-'
-                        }}</p>
+                    }}</p>
                 </template>
             </Card>
             <p class="mt-4">
@@ -149,6 +156,10 @@ import { piecewiseLinearInterpolation } from '@/utils/math'
 import mode_data from '@/data/mode.json'
 
 const parameter_names = ['vocal', 'dance', 'visual']
+const boolean_options = ref([
+    { name: '否', value: false },
+    { name: '是', value: true },
+])
 
 const mode_options = ref(mode_data)
 const mode_select = ref(2)
@@ -157,6 +168,8 @@ const mode = computed(() => mode_options.value.find(item => item.id === mode_sel
 const difficulty_options = computed(() => mode.value ? mode.value.difficulty : [])
 const difficulty_select = ref(2)
 const difficulty = computed(() => difficulty_options.value.find(item => item.id === difficulty_select.value))
+
+const is_enhanced_week = ref(false)
 
 const idol_select_ref = ref()
 const idol = computed(() => idol_select_ref.value["select_option"])
@@ -174,6 +187,7 @@ const parameters = ref<{ [key: string]: number | null }>({
     visual: null,
     fans: null,
 })
+const star = ref(null)
 
 const audition_options = computed(() => difficulty.value ? difficulty.value.audition : [])
 const audition_select = ref(audition_options.value[audition_options.value.length - 1].id)
@@ -193,11 +207,7 @@ const scores = ref<{ [key: string]: number | null }>({
     visual: null,
 })
 
-const is_first_options = ref([
-    { name: '是', value: true },
-    { name: '否', value: false },
-])
-const is_first_select = ref(true)
+const is_first = ref(true)
 
 const base_increase_parameters = computed(() => {
     const value: { [key: string]: number } = { fans: 0 }
@@ -218,7 +228,7 @@ const base_increase_parameters = computed(() => {
         (stage.value as { [key: string]: any }).score_to_fans,
         value.fans
     ))
-    if (!is_first_select.value) {
+    if (!is_first.value) {
         value.fans = 0
     }
     return value
@@ -279,6 +289,7 @@ const final_parameters = computed(() => {
 })
 
 const final_score = computed(() => {
+    let score = 0
     for (const key of [...parameter_names, 'fans']) {
         if (final_parameters.value[key] === -1) {
             return -1
@@ -287,7 +298,14 @@ const final_score = computed(() => {
     if (difficulty.value === undefined) {
         return -1
     }
-    return Math.floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
+    score = Math.floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
         + Math.floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.value.fans_to_final_score as [])], final_parameters.value.fans))
+    if (is_enhanced_week.value) {
+        if (star.value === null) {
+            return -1
+        }
+        score = Math.floor(score * 0.7) + Math.floor(star.value * 10.82)
+    }
+    return score
 })
 </script>
