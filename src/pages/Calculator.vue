@@ -13,7 +13,7 @@
                     <p>倍率</p>
                     <ParameterMultipleInput :parameters="parameter_bonus">
                         <FloatLabel class="ml-2" variant="on">
-                            <InputNumber v-model="initial_item_bonus" :maxFractionDigits="1" suffix="%"
+                            <InputNumber v-model="initial_item_bonus" :useGrouping="false" suffix="%"
                                 :invalid="initial_item_bonus === null" fluid />
                             <label for="on_label">初始道具加成%</label>
                         </FloatLabel>
@@ -151,8 +151,8 @@ const increase_parameters = computed(() => {
             value[key] = -1
         } else {
             value[key] = base_increase_parameters.value[key]
-                + Math.floor(base_increase_parameters.value[key] * parameter_bonus.value[key])
-                + Math.floor(base_increase_parameters.value[key] * initial_item_bonus.value)
+                + Math.floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
+                + Math.floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
         }
     }
     return value
