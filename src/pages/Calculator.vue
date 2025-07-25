@@ -13,7 +13,7 @@
                     <p>倍率</p>
                     <ParameterMultipleInput :parameters="parameter_bonus">
                         <FloatLabel class="ml-2" variant="on">
-                            <InputNumber v-model="initial_item_bonus" :useGrouping="false" suffix="%"
+                            <InputNumber v-model="initial_item_bonus" :useGrouping="false"
                                 :invalid="initial_item_bonus === null" fluid />
                             <label for="on_label">初始道具加成%</label>
                         </FloatLabel>
