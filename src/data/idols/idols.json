@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "花海咲季",
-        "icon": "icons/1.png",
+        "icon": "",
         "type": "balance",
         "specialty": {
             "vocal": 3,
@@ -13,12 +13,122 @@
     {
         "id": 2,
         "name": "月村手毬",
-        "icon": "icons/1.png",
+        "icon": "",
         "type": "radical",
         "specialty": {
             "vocal": 1,
             "dance": 3,
             "visual": 2
+        }
+    },
+    {
+        "id": 3,
+        "name": "藤田琴音",
+        "icon": "",
+        "type": "radical",
+        "specialty": {
+            "vocal": 3,
+            "dance": 1,
+            "visual": 2
+        }
+    },
+    {
+        "id": 4,
+        "name": "有村麻央",
+        "icon": "",
+        "type": "radical",
+        "specialty": {
+            "vocal": 1,
+            "dance": 3,
+            "visual": 2
+        }
+    },
+    {
+        "id": 5,
+        "name": "葛城莉莉娅",
+        "icon": "",
+        "type": "balance",
+        "specialty": {
+            "vocal": 3,
+            "dance": 2,
+            "visual": 1
+        }
+    },
+    {
+        "id": 6,
+        "name": "仓本千奈",
+        "icon": "",
+        "type": "radical",
+        "specialty": {
+            "vocal": 3,
+            "dance": 1,
+            "visual": 2
+        }
+    },
+    {
+        "id": 7,
+        "name": "紫云清夏",
+        "icon": "",
+        "type": "radical",
+        "specialty": {
+            "vocal": 3,
+            "dance": 1,
+            "visual": 2
+        }
+    },
+    {
+        "id": 8,
+        "name": "篠泽广",
+        "icon": "",
+        "type": "balance",
+        "specialty": {
+            "vocal": 1,
+            "dance": 2,
+            "visual": 3
+        }
+    },
+    {
+        "id": 9,
+        "name": "姬崎莉波",
+        "icon": "",
+        "type": "balance",
+        "specialty": {
+            "vocal": 1,
+            "dance": 2,
+            "visual": 3
+        }
+    },
+    {
+        "id": 10,
+        "name": "花海佑芽",
+        "icon": "",
+        "type": "balance",
+        "specialty": {
+            "vocal": 3,
+            "dance": 1,
+            "visual": 2
+        }
+    },
+    {
+        "id": 11,
+        "name": "十王星南",
+        "icon": "",
+        "type": "balance",
+        "specialty": {
+            "vocal": 2,
+            "dance": 3,
+            "visual": 1
+        }
+    },
+    {
+        "id": 12,
+        "name": "秦谷美铃",
+        "icon": "",
+        "type": "radical",
+        "specialty": {
+            "vocal": 2,
+            "dance": 3,
+            "visual": 1
         }
     }
 ]
