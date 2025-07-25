@@ -75,6 +75,9 @@
                         }}</p>
                 </template>
             </Card>
+            <p class="mt-4">
+                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。如果出现错误，请反馈给作者。 By Kanon511
+            </p>
         </div>
     </div>
 </template>
@@ -147,7 +150,7 @@ const base_increase_parameters = computed(() => {
 const increase_parameters = computed(() => {
     const value: { [key: string]: number } = { "fans": base_increase_parameters.value.fans }
     for (const key of parameter_names) {
-        if (parameter_bonus.value[key] === null || initial_item_bonus.value === null) {
+        if (parameter_bonus.value[key] === null || initial_item_bonus.value === null || scores.value[key] === null) {
             value[key] = -1
         } else {
             value[key] = base_increase_parameters.value[key]
