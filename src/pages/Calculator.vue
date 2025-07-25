@@ -5,10 +5,10 @@
                 <template #content>
                     <p>剧本</p>
                     <SelectButton class="my-2" v-model="mode_select" :options="mode_options" optionLabel="name"
-                        optionValue="id" optionDisabled="constant" :allowEmpty="false" fluid />
+                        optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <p>难度</p>
                     <SelectButton class="my-2" v-model="difficulty_select" :options="difficulty_options"
-                        optionLabel="name" optionValue="id" optionDisabled="constant" :allowEmpty="false" fluid />
+                        optionLabel="name" optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <IdolSelect class="my-4" ref="idol_select_ref" />
                     <p>倍率</p>
                     <ParameterMultipleInput :parameters="parameter_bonus">
@@ -30,14 +30,17 @@
                             <label for="on_label">粉丝数</label>
                         </FloatLabel>
                     </ParameterInput>
+                    <p>试验</p>
+                    <SelectButton class="my-2" v-model="audition_select" :options="audition_options" optionLabel="name"
+                        optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <p>舞台</p>
                     <SelectButton class="my-2" v-model="stage_select" :options="stage_options" optionLabel="name"
-                        optionValue="id" optionDisabled="constant" :allowEmpty="false" fluid />
+                        optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <p>试镜中得分</p>
                     <ParameterInput :parameters="scores" />
                     <p>是否为一位</p>
                     <SelectButton class="my-2" v-model="is_first_select" :options="is_first_options" optionLabel="name"
-                        optionValue="value" optionDisabled="constant" :allowEmpty="false" fluid />
+                        optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid />
 
                 </template>
             </Card>
@@ -140,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { piecewiseLinearInterpolation } from '@/utils/math'
 
 import mode_data from '@/data/mode.json'
@@ -172,9 +175,17 @@ const parameters = ref<{ [key: string]: number | null }>({
     fans: null,
 })
 
-const stage_options = computed(() => difficulty.value ? difficulty.value.stage : [])
-const stage_select = ref(1)
+const audition_options = computed(() => difficulty.value ? difficulty.value.audition : [])
+const audition_select = ref(audition_options.value[audition_options.value.length - 1].id)
+const audition = computed(() => audition_options.value.find(item => item.id === audition_select.value))
+
+const stage_options = computed(() => audition.value ? audition.value.stage : [])
+const stage_select = ref(stage_options.value[stage_options.value.length - 1].id)
 const stage = computed(() => stage_options.value.find(item => item.id === stage_select.value))
+
+watch(stage_options, (new_value) => {
+    stage_select.value = new_value[new_value.length - 1].id
+})
 
 const scores = ref<{ [key: string]: number | null }>({
     vocal: null,
