@@ -17,8 +17,8 @@
         "type": "radical",
         "specialty": {
             "vocal": 1,
-            "dance": 3,
-            "visual": 2
+            "dance": 2,
+            "visual": 3
         }
     },
     {
@@ -93,9 +93,9 @@
         "icon": "",
         "type": "balance",
         "specialty": {
-            "vocal": 1,
+            "vocal": 3,
             "dance": 2,
-            "visual": 3
+            "visual": 1
         }
     },
     {
@@ -105,8 +105,8 @@
         "type": "balance",
         "specialty": {
             "vocal": 3,
-            "dance": 1,
-            "visual": 2
+            "dance": 2,
+            "visual": 1
         }
     },
     {
@@ -126,8 +126,8 @@
         "icon": "",
         "type": "radical",
         "specialty": {
-            "vocal": 2,
-            "dance": 3,
+            "vocal": 3,
+            "dance": 2,
             "visual": 1
         }
     }
