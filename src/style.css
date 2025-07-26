@@ -3,13 +3,13 @@
 
 @import 'primeicons/primeicons';
 
-body {
+/* body {
     margin: 0px;
-    min-height: 100%;
+    min-height: 100hv;
     overflow-x: hidden;
     overflow-y: auto;
     background-color: var(--body-bg);
     font-weight: normal;
     color: var(--body-text-color);
     padding: 1rem;
-}
+} */

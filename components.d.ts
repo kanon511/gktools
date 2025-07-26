@@ -14,6 +14,7 @@ declare module 'vue' {
     FloatLabel: typeof import('primevue/floatlabel')['default']
     IdolList: typeof import('./src/components/IdolList.vue')['default']
     IdolSelect: typeof import('./src/components/IdolSelect.vue')['default']
+    Image: typeof import('primevue/image')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     Menubar: typeof import('primevue/menubar')['default']
     MenuBar: typeof import('./src/components/menu/MenuBar.vue')['default']

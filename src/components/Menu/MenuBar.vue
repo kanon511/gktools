@@ -1,7 +1,10 @@
 <template>
     <Menubar :model="items" breakpoint="300px">
         <template #start>
-            <Avatar class="mr-1" image="@/../public/favicon.ico" shape="circle" />
+            <router-link :to="{ name: 'Home' }" class="flex items-center mx-1">
+                <Avatar image="@/../favicon.ico" shape="circle" />
+            </router-link>
+
         </template>
         <template #item="{ item, props }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
@@ -32,11 +35,6 @@ watch(darkMode, (newValue) => {
 });
 
 const items = ref([
-    {
-        label: '主页',
-        icon: 'pi pi-home',
-        route: { name: "Home" },
-    },
     {
         label: '训练计算器',
         icon: 'pi pi-calculator',
