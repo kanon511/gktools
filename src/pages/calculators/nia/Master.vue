@@ -3,9 +3,7 @@
         <div class="flex flex-col items-center w-full max-w-[600px]">
             <Card class="mt-4 w-full">
                 <template #content>
-                    <p>剧本</p>
-                    <SelectButton class="my-2" v-model="mode_select" :options="mode_options" optionLabel="name"
-                        optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
+                    <ModeSelect :select_id="2" />
                     <p>难度</p>
                     <SelectButton class="my-2" v-model="difficulty_select" :options="difficulty_options"
                         optionLabel="name" optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
@@ -138,8 +136,7 @@
                             {{ final_parameters.fans !== -1 ? final_parameters.fans : '-' }}
                         </TextCard>
                     </div>
-                    <p class="text-4xl text-center mt-8 mb-4">最终评价：{{ final_score !== -1 ? final_score.toString() : '-'
-                        }}</p>
+                    <FinalScore :final_score="final_score" />
                 </template>
             </Card>
             <p class="mt-4">
@@ -169,20 +166,18 @@ interface NiaMasData {
 
 import { computed, ref, watch } from 'vue'
 import { piecewiseLinearInterpolation } from '@/utils/math'
+import { PARAMETER } from '@/constants'
 
 import mode_data from '@/data/mode.json'
 
-const parameter_names = ['vocal', 'dance', 'visual']
 const boolean_options = ref([
     { name: '否', value: false },
     { name: '是', value: true },
 ])
 
-const mode_options = ref(mode_data)
-const mode_select = ref(2)
-const mode = computed(() => mode_options.value.find(item => item.id === mode_select.value))
+const mode = mode_data.find(item => item.id === 2)
 
-const difficulty_options = computed(() => mode.value ? mode.value.difficulty : [])
+const difficulty_options = ref(mode ? mode.difficulty : [])
 const difficulty_select = ref(2)
 const difficulty_data = computed(() => difficulty_options.value ? difficulty_options.value.find(item => item.id === difficulty_select.value) : null)
 
@@ -231,7 +226,7 @@ const is_first = ref(true)
 
 const base_increase_parameters = computed(() => {
     const value: { [key: string]: number } = { fans: 0 }
-    for (const key of parameter_names) {
+    for (const key of PARAMETER.NAMES) {
         if (scores.value[key] === null) {
             value[key] = -1
             value.fans = -1
@@ -256,7 +251,7 @@ const base_increase_parameters = computed(() => {
 
 const bonu_increase_parameters = computed(() => {
     const value: { [key: string]: number } = {}
-    for (const key of parameter_names) {
+    for (const key of PARAMETER.NAMES) {
         if (base_increase_parameters.value[key] === -1 || parameter_bonus.value[key] === null) {
             value[key] = -1
         } else {
@@ -268,7 +263,7 @@ const bonu_increase_parameters = computed(() => {
 
 const initial_item_bonu_increase_parameters = computed(() => {
     const value: { [key: string]: number } = {}
-    for (const key of parameter_names) {
+    for (const key of PARAMETER.NAMES) {
         if (base_increase_parameters.value[key] === -1 || initial_item_bonus.value === null) {
             value[key] = -1
         } else {
@@ -280,7 +275,7 @@ const initial_item_bonu_increase_parameters = computed(() => {
 
 const increase_parameters = computed(() => {
     const value: { [key: string]: number } = { "fans": base_increase_parameters.value.fans }
-    for (const key of parameter_names) {
+    for (const key of PARAMETER.NAMES) {
         if (parameter_bonus.value[key] === null || initial_item_bonus.value === null || scores.value[key] === null) {
             value[key] = -1
         } else {
@@ -294,7 +289,7 @@ const increase_parameters = computed(() => {
 
 const final_parameters = computed(() => {
     const value: { [key: string]: number } = {}
-    for (const key of [...parameter_names, 'fans']) {
+    for (const key of [...PARAMETER.NAMES, 'fans']) {
         if (parameters.value[key] === null || increase_parameters.value[key] === -1) {
             value[key] = -1
         }
@@ -310,7 +305,7 @@ const final_parameters = computed(() => {
 
 const final_score = computed(() => {
     let score = 0
-    for (const key of [...parameter_names, 'fans']) {
+    for (const key of [...PARAMETER.NAMES, 'fans']) {
         if (final_parameters.value[key] === -1) {
             return -1
         }

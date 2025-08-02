@@ -1,6 +1,6 @@
 <template>
     <div :class="[
-        'p-2 border-b-3 rounded-t-md w-full m-1',
+        'p-1 border-b-3 rounded-t-sm w-full m-1',
         {
             'bg-blue-100 border-blue-600 text-blue-600': theme === 'blue',
             'bg-green-100 border-green-600 text-green-600': theme === 'green',

@@ -1,0 +1,67 @@
+{
+    "difficulty": [
+        {
+            "id": 1,
+            "name": "普通",
+            "max_parameter": 1000
+        },
+        {
+            "id": 2,
+            "name": "Pro",
+            "max_parameter": 1500
+        },
+        {
+            "id": 3,
+            "name": "Master",
+            "max_parameter": 1800
+        }
+    ],
+    "score_to_final_score": [
+        [
+            0,
+            0
+        ],
+        [
+            5000,
+            1500
+        ],
+        [
+            10000,
+            2250
+        ],
+        [
+            20000,
+            3050
+        ],
+        [
+            30000,
+            3450
+        ],
+        [
+            40000,
+            3650
+        ],
+        [
+            1000000000000,
+            10000003250
+        ]
+    ],
+    "rank_bonus": [
+        {
+            "parameter": 30,
+            "score": 1700
+        },
+        {
+            "parameter": 20,
+            "score": 900
+        },
+        {
+            "parameter": 10,
+            "score": 500
+        },
+        {
+            "parameter": 0,
+            "score": 0
+        }
+    ]
+}

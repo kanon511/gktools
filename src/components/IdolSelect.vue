@@ -6,13 +6,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
-import data from "@/data/idols/idols.json"
+import { onMounted, ref } from "vue"
 
 import { Select } from "primevue"
 
-const idol_options = ref(data)
-const select_option = ref(data[0])
+const idol_options = ref()
+const select_option = ref()
+
+onMounted(async () => {
+    const data: any[] = await fetch(import.meta.env.VITE_DATA_URL + "idols/idols.json")
+        .then(res => res.json())
+    idol_options.value = data
+    select_option.value = data[0]
+})
 
 defineExpose({ select_option })
 </script>

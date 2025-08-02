@@ -10,7 +10,26 @@ const routes: RouteRecordRaw[] = [
     {
         name: "Calculator",
         path: "/calculator",
-        component: () => import("@/pages/Calculator.vue"),
+        redirect: { name: "NiaMasCalculator" },
+        children: [
+            {
+                path: "hatsu",
+                name: "HatsuCalculator",
+                component: () => import("@/pages/calculators/Hatsu.vue"),
+            },
+            {
+                path: "nia",
+                name: "NiaCalculator",
+                redirect: { name: "NiaMasCalculator" },
+                children: [
+                    {
+                        path: "mas",
+                        name: "NiaMasCalculator",
+                        component: () => import("@/pages/calculators/nia/Master.vue"),
+                    }
+                ]
+            }
+        ]
     },
 
     {
