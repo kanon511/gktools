@@ -14,7 +14,10 @@
                     <p>试镜前属性</p>
                     <ParameterInput :parameters="parameters" />
                     <p>试镜中得分</p>
-                    <ParameterInput :parameters="scores" />
+                    <FloatLabel class="my-4" variant="on">
+                        <InputNumber v-model="total_score" :useGrouping="false" :invalid="total_score === null" fluid />
+                        <label for="on_label">总分</label>
+                    </FloatLabel>
                     <p>排名</p>
                     <SelectButton class="my-2" v-model="rank" :options="rank_options" optionLabel="name"
                         optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid />
@@ -25,9 +28,27 @@
             <Card class="mt-4 w-full">
                 <template #content>
                     <Panel header="评价总分表" toggleable>
+                        <div class="flex flex-row items-center mb-2">
+                            <p class="mr-2">显示过高得分</p>
+                            <ToggleSwitch v-model="is_display_high_score" />
+                        </div>
                         <DataTable :value="target_score" size="small" stripedRows rowHove>
-                            <Column field="name" header="评价" />
-                            <Column field="score" header="所需总分" />
+                            <Column class="!text-center" field="name">
+                                <template #header>
+                                    <p class="w-full text-center font-bold">评价</p>
+                                </template>
+                            </Column>
+                            <Column class="!text-center" field="score">
+                                <template #header>
+                                    <p class="w-full text-center font-bold">所需总分</p>
+                                </template>
+                            </Column>
+                            <Column class="w-24 !text-end">
+                                <template #body="{ data }">
+                                    <Button icon="pi pi-check" @click="selectRow(data)" severity="secondary"
+                                        rounded></Button>
+                                </template>
+                            </Column>
                         </DataTable>
                     </Panel>
                     <p class="mt-4">最终属性 (vo/da/vi)</p>
@@ -55,6 +76,7 @@ interface HatsuData {
         id: number,
         name: string,
         max_parameter: number
+        high_score: number
     }[],
     score_to_final_score: [number, number][],
     rank_bonus: {
@@ -64,8 +86,10 @@ interface HatsuData {
 }
 
 import { computed, ref } from 'vue'
-import { piecewiseLinearInterpolation, inversePiecewiseLinearInterpolation, dictionarySum, floor } from '@/utils/math'
+import { piecewiseLinearInterpolation, inversePiecewiseLinearInterpolation, dictionarySum, floor, ceil } from '@/utils/math'
 import { PARAMETER } from '@/constants'
+
+import ToggleSwitch from 'primevue/toggleswitch';
 
 import mode_data from '@/data/mode.json'
 
@@ -89,25 +113,10 @@ const parameters = ref<{ [key: string]: number | null }>({
     dance: null,
     visual: null,
 })
-
-const scores = ref<{ [key: string]: number | null }>({
-    vocal: null,
-    dance: null,
-    visual: null,
-})
-
-const total_score = computed(() => {
-    let value = 0
-    for (const key of [...PARAMETER.NAMES]) {
-        if (scores.value[key] === null) {
-            return -1
-        }
-        value += scores.value[key]
-    }
-    return value
-})
-
+const total_score = ref<number | null>(null)
 const rank = ref(0)
+
+const is_display_high_score = ref(false)
 
 const final_parameters = computed(() => {
     const add_parameter = mode_external_data.rank_bonus[rank.value].parameter
@@ -123,7 +132,13 @@ const final_parameters = computed(() => {
 const rank_data: { [key: string]: number } = await fetch(import.meta.env.VITE_DATA_URL + "rank.json")
     .then(res => res.json())
 const target_score = computed(() => {
-    const value = []
+    const value: { name: string, score: number }[] = []
+    for (const key of [...PARAMETER.NAMES]) {
+        if (final_parameters.value[key] === -1) {
+            return value
+        }
+    }
+
     let minimum_value
     for (const key in rank_data) {
         let required_score = rank_data[key] -
@@ -132,19 +147,28 @@ const target_score = computed(() => {
 
         const add_value = {
             name: key,
-            score: floor(inversePiecewiseLinearInterpolation(mode_external_data.score_to_final_score, required_score))
+            score: ceil(inversePiecewiseLinearInterpolation(mode_external_data.score_to_final_score, required_score))
         }
 
-        if (add_value.score <= 0 || (rank.value === 0 && add_value.score <= 5000)) {
+        if (add_value.score <= 0 || (rank.value === 0 && add_value.score <= 4000)) {
             minimum_value = add_value
         }
         else {
-            value.unshift(add_value)
+            if (value.length < 2 || is_display_high_score.value ||
+                (!is_display_high_score.value && add_value.score < (difficulty.value ? difficulty.value.high_score : 100000))) {
+                value.unshift(add_value)
+            }
         }
     }
-    value.push(minimum_value)
+    if (minimum_value) {
+        value.push(minimum_value)
+    }
     return value
 })
+
+function selectRow(data: { name: string, score: number }) {
+    total_score.value = data.score
+}
 
 const final_score = computed(() => {
     for (const key of [...PARAMETER.NAMES]) {
@@ -152,7 +176,7 @@ const final_score = computed(() => {
             return -1
         }
     }
-    if (total_score.value === -1) {
+    if (total_score.value === null) {
         return -1
     }
 

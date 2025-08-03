@@ -13,7 +13,8 @@
             {
                 "id": 1,
                 "name": "Pro",
-                "disabled": true
+                "data_path": "modes/nia_pro.json",
+                "page_name": "NiaProCalculator"
             },
             {
                 "id": 2,

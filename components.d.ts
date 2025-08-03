@@ -13,6 +13,7 @@ declare module 'vue' {
     Card: typeof import('primevue/card')['default']
     Column: typeof import('primevue/column')['default']
     DataTable: typeof import('primevue/datatable')['default']
+    DifficultySelect: typeof import('./src/components/calculator/DifficultySelect.vue')['default']
     FinalScore: typeof import('./src/components/calculator/FinalScore.vue')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']
     IdolList: typeof import('./src/components/IdolList.vue')['default']

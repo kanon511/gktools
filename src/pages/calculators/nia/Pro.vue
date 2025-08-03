@@ -3,20 +3,18 @@
         <div class="flex flex-col items-center w-full max-w-[600px]">
             <Card class="mt-4 w-full">
                 <template #content>
-                    <ModeSelect :select_id="2" />
-                    <DifficultySelect :select_id="2" :difficulty_options="difficulty_options" />
-                    <IdolSelect class="my-4" ref="idol_select_ref" />
-                    <p>强化周</p>
-                    <SelectButton class="my-2" v-model="is_enhanced_week" :options="boolean_options" optionLabel="name"
-                        optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid />
-                    <p>倍率</p>
-                    <ParameterMultipleInput :parameters="parameter_bonus">
-                        <FloatLabel class="ml-2" variant="on">
-                            <InputNumber v-model="initial_item_bonus" :useGrouping="false"
-                                :invalid="initial_item_bonus === null" fluid />
-                            <label for="on_label">初始道具加成%</label>
+                    <ModeSelect :select_id="2" :difficulty_options />
+                    <DifficultySelect :select_id="1" :difficulty_options="difficulty_options" />
+                    <div class="flex flex-row my-4">
+                        <IdolSelect class="flex-3/4" ref="idol_select_ref" />
+                        <FloatLabel class="ml-2 flex-1/4" variant="on">
+                            <InputNumber v-model="favorable" :useGrouping="false"
+                                :invalid="favorable === null || favorable < 10 || favorable > 20" fluid />
+                            <label for="on_label">好感度</label>
                         </FloatLabel>
-                    </ParameterMultipleInput>
+                    </div>
+                    <p>倍率</p>
+                    <ParameterMultipleInput :parameters="parameter_bonus" />
                 </template>
             </Card>
             <Card class="mt-4 w-full">
@@ -27,10 +25,6 @@
                             <InputNumber v-model="parameters.fans" :useGrouping="false"
                                 :invalid="parameters.fans === null" fluid />
                             <label for="on_label">粉丝数</label>
-                        </FloatLabel>
-                        <FloatLabel class="ml-2" variant="on" v-if="is_enhanced_week">
-                            <InputNumber v-model="star" :useGrouping="false" :invalid="star === null" fluid />
-                            <label for="on_label">星星数</label>
                         </FloatLabel>
                     </ParameterInput>
                     <p>试验</p>
@@ -44,7 +38,6 @@
                     <!-- <p>是否为一位</p>
                     <SelectButton class="my-2" v-model="is_first" :options="boolean_options" optionLabel="name"
                         optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid /> -->
-
                 </template>
             </Card>
         </div>
@@ -93,25 +86,6 @@
                             </TextCard>
                             <TextCard theme="yellow">
                                 {{ bonu_increase_parameters.visual !== -1 ? '+' + bonu_increase_parameters.visual : '-'
-                                }}
-                            </TextCard>
-                            <TextCard theme="green">
-                                -
-                            </TextCard>
-                        </div>
-                        <p>初始道具加成属性</p>
-                        <div class="flex flex-row mt-2">
-                            <TextCard theme="red">
-                                {{ initial_item_bonu_increase_parameters.vocal !== -1 ? '+' +
-                                    initial_item_bonu_increase_parameters.vocal : '-' }}
-                            </TextCard>
-                            <TextCard theme="blue">
-                                {{ initial_item_bonu_increase_parameters.dance !== -1 ? '+' +
-                                    initial_item_bonu_increase_parameters.dance : '-' }}
-                            </TextCard>
-                            <TextCard theme="yellow">
-                                {{ initial_item_bonu_increase_parameters.visual !== -1 ? '+' +
-                                    initial_item_bonu_increase_parameters.visual : '-'
                                 }}
                             </TextCard>
                             <TextCard theme="green">
@@ -168,11 +142,6 @@ import { PARAMETER } from '@/constants'
 
 import mode_data from '@/data/mode.json'
 
-const boolean_options = ref([
-    { name: '否', value: false },
-    { name: '是', value: true },
-])
-
 const mode = mode_data.find(item => item.id === 2)
 
 const difficulty_options = ref(mode ? mode.difficulty : [])
@@ -182,17 +151,15 @@ const difficulty_data = computed(() => difficulty_options.value ? difficulty_opt
 const difficulty: NiaMasData = await fetch(import.meta.env.VITE_DATA_URL + (difficulty_data.value ? difficulty_data.value.data_path : ""))
     .then(res => res.json())
 
-const is_enhanced_week = ref(false)
-
 const idol_select_ref = ref()
 const idol = computed(() => idol_select_ref.value.select_option)
+const favorable = ref(20)
 
 const parameter_bonus = ref<{ [key: string]: number | null }>({
     vocal: null,
     dance: null,
     visual: null,
 })
-const initial_item_bonus = ref(null)
 
 const parameters = ref<{ [key: string]: number | null }>({
     vocal: null,
@@ -200,7 +167,6 @@ const parameters = ref<{ [key: string]: number | null }>({
     visual: null,
     fans: null,
 })
-const star = ref(null)
 
 const audition_options = computed(() => difficulty.audition)
 const audition_select = ref(audition_options.value[audition_options.value.length - 1].id)
@@ -259,27 +225,14 @@ const bonu_increase_parameters = computed(() => {
     return value
 })
 
-const initial_item_bonu_increase_parameters = computed(() => {
-    const value: { [key: string]: number } = {}
-    for (const key of PARAMETER.NAMES) {
-        if (base_increase_parameters.value[key] === -1 || initial_item_bonus.value === null) {
-            value[key] = -1
-        } else {
-            value[key] = Math.floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
-        }
-    }
-    return value
-})
-
 const increase_parameters = computed(() => {
     const value: { [key: string]: number } = { "fans": base_increase_parameters.value.fans }
     for (const key of PARAMETER.NAMES) {
-        if (parameter_bonus.value[key] === null || initial_item_bonus.value === null || scores.value[key] === null) {
+        if (parameter_bonus.value[key] === null || scores.value[key] === null) {
             value[key] = -1
         } else {
             value[key] = base_increase_parameters.value[key]
                 + Math.floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
-                + Math.floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
         }
     }
     return value
@@ -302,22 +255,13 @@ const final_parameters = computed(() => {
 })
 
 const final_score = computed(() => {
-    let score = 0
     for (const key of [...PARAMETER.NAMES, 'fans']) {
         if (final_parameters.value[key] === -1) {
             return -1
         }
     }
 
-    score = Math.floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
+    return Math.floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
         + Math.floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], final_parameters.value.fans))
-
-    if (is_enhanced_week.value) {
-        if (star.value === null) {
-            return -1
-        }
-        score = Math.floor(score * 0.7) + Math.floor(star.value * 10.82)
-    }
-    return score
 })
 </script>

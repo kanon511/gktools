@@ -3,17 +3,20 @@
         {
             "id": 1,
             "name": "普通",
-            "max_parameter": 1000
+            "max_parameter": 1000,
+            "high_score": 100000
         },
         {
             "id": 2,
             "name": "Pro",
-            "max_parameter": 1500
+            "max_parameter": 1500,
+            "high_score": 250000
         },
         {
             "id": 3,
             "name": "Master",
-            "max_parameter": 1800
+            "max_parameter": 1800,
+            "high_score": 500000
         }
     ],
     "score_to_final_score": [

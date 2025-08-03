@@ -54,6 +54,10 @@ export function inversePiecewiseLinearInterpolation(points: [number, number][], 
     throw new Error("未能找到对应的插值区间");
 }
 
-export function floor(n: number, epsilon: number = 1e-9) {
+export function floor(n: number, epsilon: number = 1e-8) {
     return Math.floor(n + epsilon);
+}
+
+export function ceil(n: number, epsilon: number = 1e-8) {
+    return Math.ceil(n - epsilon);
 }
