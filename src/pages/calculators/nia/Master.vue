@@ -175,11 +175,6 @@ import ToggleSwitch from 'primevue/toggleswitch';
 
 import mode_data from '@/data/mode.json'
 
-const boolean_options = ref([
-    { name: '否', value: false },
-    { name: '是', value: true },
-])
-
 const mode = mode_data.find(item => item.id === 2)
 
 const difficulty_options = ref(mode ? mode.difficulty : [])
