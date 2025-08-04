@@ -6,7 +6,7 @@
                     <ModeSelect :select_id="2" />
                     <DifficultySelect :select_id="2" :difficulty_options="difficulty_options" />
                     <IdolSelect class="my-4" ref="idol_select_ref" />
-                    <p>强化周</p>
+                    <p>强化月间</p>
                     <SelectButton class="my-2" v-model="is_enhanced_week" :options="boolean_options" optionLabel="name"
                         optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <p>倍率</p>
@@ -139,7 +139,10 @@
                 </template>
             </Card>
             <p class="mt-4">
-                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。如果出现错误，请反馈给作者。 By Kanon511
+                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。如果出现错误，请反馈给作者。<br>
+                ※ 数据来源：<a href="https://seesaawiki.jp/gakumasu/d/N.I.A/%a5%de%a5%b9%a5%bf%a1%bc"
+                    target="_blank">WIKI</a> By
+                Kanon511
             </p>
         </div>
     </div>
@@ -164,7 +167,7 @@ interface NiaMasData {
 }
 
 import { computed, ref, watch } from 'vue'
-import { piecewiseLinearInterpolation } from '@/utils/math'
+import { floor, piecewiseLinearInterpolation } from '@/utils/math'
 import { PARAMETER } from '@/constants'
 
 import mode_data from '@/data/mode.json'
@@ -231,14 +234,14 @@ const base_increase_parameters = computed(() => {
             value.fans = -1
         }
         else {
-            value[key] = Math.floor(piecewiseLinearInterpolation(
+            value[key] = floor(piecewiseLinearInterpolation(
                 [[0, 0], ...(stage.value as { [key: string]: any })[idol.value.type][idol.value.specialty[key].toString()]],
                 scores.value[key]
             ))
             value.fans = value.fans === -1 ? -1 : (value.fans + scores.value[key])
         }
     }
-    value.fans = value.fans === -1 ? -1 : Math.floor(piecewiseLinearInterpolation(
+    value.fans = value.fans === -1 ? -1 : floor(piecewiseLinearInterpolation(
         (stage.value as { [key: string]: any }).score_to_fans,
         value.fans
     ))
@@ -254,7 +257,7 @@ const bonu_increase_parameters = computed(() => {
         if (base_increase_parameters.value[key] === -1 || parameter_bonus.value[key] === null) {
             value[key] = -1
         } else {
-            value[key] = Math.floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
+            value[key] = floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
         }
     }
     return value
@@ -266,7 +269,7 @@ const initial_item_bonu_increase_parameters = computed(() => {
         if (base_increase_parameters.value[key] === -1 || initial_item_bonus.value === null) {
             value[key] = -1
         } else {
-            value[key] = Math.floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
+            value[key] = floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
         }
     }
     return value
@@ -279,8 +282,8 @@ const increase_parameters = computed(() => {
             value[key] = -1
         } else {
             value[key] = base_increase_parameters.value[key]
-                + Math.floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
-                + Math.floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
+                + floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
+                + floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
         }
     }
     return value
@@ -310,14 +313,14 @@ const final_score = computed(() => {
         }
     }
 
-    score = Math.floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
-        + Math.floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], final_parameters.value.fans))
+    score = floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
+        + floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], final_parameters.value.fans))
 
     if (is_enhanced_week.value) {
         if (star.value === null) {
             return -1
         }
-        score = Math.floor(score * 0.7) + Math.floor(star.value * 10.82)
+        score = floor(score * 0.7) + floor(star.value * 10.82)
     }
     return score
 })

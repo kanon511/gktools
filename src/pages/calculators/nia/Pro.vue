@@ -9,7 +9,8 @@
                         <IdolSelect class="flex-3/4" ref="idol_select_ref" />
                         <FloatLabel class="ml-2 flex-1/4" variant="on">
                             <InputNumber v-model="favorable" :useGrouping="false"
-                                :invalid="favorable === null || favorable < 10 || favorable > 20" fluid />
+                                :invalid="favorable === null || difficulty.favorable_fans_bonus_percentage[favorable.toString()] === undefined"
+                                fluid />
                             <label for="on_label">好感度</label>
                         </FloatLabel>
                     </div>
@@ -77,7 +78,7 @@
                                 {{ base_increase_parameters.fans !== -1 ? '+' + base_increase_parameters.fans : '-' }}
                             </TextCard>
                         </div>
-                        <p>属性加成属性</p>
+                        <p>属性加成属性 (好感度粉丝数加成)</p>
                         <div class="flex flex-row mt-2">
                             <TextCard theme="red">
                                 {{ bonu_increase_parameters.vocal !== -1 ? '+' + bonu_increase_parameters.vocal : '-' }}
@@ -90,7 +91,8 @@
                                 }}
                             </TextCard>
                             <TextCard theme="green">
-                                -
+                                {{ bonu_increase_parameters.fans !== -1 ? '+' + bonu_increase_parameters.fans : '-'
+                                }}
                             </TextCard>
                         </div>
                     </Panel>
@@ -113,7 +115,8 @@
                 </template>
             </Card>
             <p class="mt-4">
-                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。如果出现错误，请反馈给作者。 By Kanon511
+                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。如果出现错误，请反馈给作者。<br>
+                ※ 数据来源：<a href="https://seesaawiki.jp/gakumasu/d/N.I.A" target="_blank">WIKI</a> By Kanon511
             </p>
         </div>
     </div>
@@ -134,11 +137,12 @@ interface NiaMasData {
             score_to_fans?: [number, number][],
         }[]
     }[],
+    favorable_fans_bonus_percentage: { [key: string]: number },
     fans_to_final_score: [number, number][]
 }
 
 import { computed, ref, watch } from 'vue'
-import { piecewiseLinearInterpolation } from '@/utils/math'
+import { floor, piecewiseLinearInterpolation } from '@/utils/math'
 import { PARAMETER } from '@/constants'
 
 import mode_data from '@/data/mode.json'
@@ -155,6 +159,12 @@ const difficulty: NiaMasData = await fetch(import.meta.env.VITE_DATA_URL + (diff
 const idol_select_ref = ref()
 const idol = computed(() => idol_select_ref.value?.select_option)
 const favorable = ref(20)
+const favorable_fans_bonus = computed(() => {
+    if (idol.value && difficulty.favorable_fans_bonus_percentage[favorable.value.toString()]) {
+        return difficulty.favorable_fans_bonus_percentage[favorable.value.toString()] / 100
+    }
+    return -1
+})
 
 const parameter_bonus = ref<{ [key: string]: number | null }>({
     vocal: null,
@@ -197,14 +207,14 @@ const base_increase_parameters = computed(() => {
             value.fans = -1
         }
         else {
-            value[key] = Math.floor(piecewiseLinearInterpolation(
+            value[key] = floor(piecewiseLinearInterpolation(
                 [[0, 0], ...(stage.value as { [key: string]: any })[idol.value.type][idol.value.specialty[key].toString()]],
                 scores.value[key]
             ))
             value.fans = value.fans === -1 ? -1 : (value.fans + scores.value[key])
         }
     }
-    value.fans = value.fans === -1 ? -1 : Math.floor(piecewiseLinearInterpolation(
+    value.fans = value.fans === -1 ? -1 : floor(piecewiseLinearInterpolation(
         (stage.value as { [key: string]: any }).score_to_fans,
         value.fans
     ))
@@ -215,25 +225,28 @@ const base_increase_parameters = computed(() => {
 })
 
 const bonu_increase_parameters = computed(() => {
-    const value: { [key: string]: number } = {}
+    const value: { [key: string]: number } = {
+        fans: (base_increase_parameters.value.fans === -1 || favorable_fans_bonus.value === -1) ? -1 :
+            floor(base_increase_parameters.value.fans * favorable_fans_bonus.value),
+    }
     for (const key of PARAMETER.NAMES) {
         if (base_increase_parameters.value[key] === -1 || parameter_bonus.value[key] === null) {
             value[key] = -1
         } else {
-            value[key] = Math.floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
+            value[key] = floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
         }
     }
     return value
 })
 
 const increase_parameters = computed(() => {
-    const value: { [key: string]: number } = { "fans": base_increase_parameters.value.fans }
-    for (const key of PARAMETER.NAMES) {
-        if (parameter_bonus.value[key] === null || scores.value[key] === null) {
+    const value: { [key: string]: number } = {}
+    for (const key of [...PARAMETER.NAMES, "fans"]) {
+        if (base_increase_parameters.value[key] === -1 || bonu_increase_parameters.value[key] === -1) {
             value[key] = -1
         } else {
             value[key] = base_increase_parameters.value[key]
-                + Math.floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
+                + bonu_increase_parameters.value[key]
         }
     }
     return value
@@ -262,7 +275,7 @@ const final_score = computed(() => {
         }
     }
 
-    return Math.floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
-        + Math.floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], final_parameters.value.fans))
+    return floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
+        + floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], final_parameters.value.fans))
 })
 </script>
