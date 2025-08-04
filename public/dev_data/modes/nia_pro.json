@@ -841,6 +841,7 @@
         }
     ],
     "favorable_fans_bonus_percentage": {
+        "default": 20,
         "10": 0,
         "11": 5,
         "12": 10,

@@ -6,9 +6,10 @@
                     <ModeSelect :select_id="2" />
                     <DifficultySelect :select_id="2" :difficulty_options="difficulty_options" />
                     <IdolSelect class="my-4" ref="idol_select_ref" />
-                    <p>强化月间</p>
-                    <SelectButton class="my-2" v-model="is_enhanced_week" :options="boolean_options" optionLabel="name"
-                        optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid />
+                    <div class="flex flex-row items-center mb-2">
+                        <p class="mr-2">强化月间</p>
+                        <ToggleSwitch v-model="is_enhanced_week" />
+                    </div>
                     <p>倍率</p>
                     <ParameterMultipleInput :parameters="parameter_bonus">
                         <FloatLabel class="ml-2" variant="on">
@@ -169,6 +170,8 @@ interface NiaMasData {
 import { computed, ref, watch } from 'vue'
 import { floor, piecewiseLinearInterpolation } from '@/utils/math'
 import { PARAMETER } from '@/constants'
+
+import ToggleSwitch from 'primevue/toggleswitch';
 
 import mode_data from '@/data/mode.json'
 
