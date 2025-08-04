@@ -39,6 +39,7 @@
                     <p>舞台</p>
                     <SelectButton class="my-2" v-model="stage_select" :options="stage_options" optionLabel="name"
                         optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
+                    <StageScoreInfoTable :idol="idol" :stage="stage" />
                     <p>试镜中得分</p>
                     <ParameterInput :parameters="scores" />
                     <!-- <p>是否为一位</p>
@@ -119,7 +120,7 @@
                             </TextCard>
                         </div>
                     </Panel>
-                    <p class="mt-4">最终属性 (vo/da/vi/粉丝数)</p>
+                    <p class="mt-2">最终属性 (vo/da/vi/粉丝数)</p>
                     <div class="flex flex-row mt-2">
                         <TextCard theme="red">
                             {{ final_parameters.vocal !== -1 ? final_parameters.vocal : '-' }}
@@ -185,7 +186,7 @@ const difficulty: NiaMasData = await fetch(import.meta.env.VITE_DATA_URL + (diff
 const is_enhanced_week = ref(false)
 
 const idol_select_ref = ref()
-const idol = computed(() => idol_select_ref.value.select_option)
+const idol = computed(() => idol_select_ref.value?.select_option)
 
 const parameter_bonus = ref<{ [key: string]: number | null }>({
     vocal: null,
@@ -225,7 +226,7 @@ const is_first = ref(true)
 const base_increase_parameters = computed(() => {
     const value: { [key: string]: number } = { fans: 0 }
     for (const key of PARAMETER.NAMES) {
-        if (scores.value[key] === null) {
+        if (scores.value[key] === null || !idol.value) {
             value[key] = -1
             value.fans = -1
         }

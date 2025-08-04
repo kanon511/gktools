@@ -13,8 +13,14 @@
                 <template #content>
                     <p>试镜前属性</p>
                     <ParameterInput :parameters="parameters" />
-                    <p>试镜中得分</p>
-                    <FloatLabel class="my-4" variant="on">
+                    <div class="flex flex-row items-center mt-4">
+                        <p class="flex-8/16">试镜中得分</p>
+                        <div class="flex flex-1/16 items-center justify-center" v-if="difficulty_select < 3">
+                            <p>*好感度低于4</p>
+                            <ToggleSwitch class="ml-2" v-model="is_first" />
+                        </div>
+                    </div>
+                    <FloatLabel class="mt-4" variant="on">
                         <InputNumber v-model="total_score" :useGrouping="false" :invalid="total_score === null" fluid />
                         <label for="on_label">总分</label>
                     </FloatLabel>
@@ -32,7 +38,7 @@
                             <p class="mr-2">显示过高得分</p>
                             <ToggleSwitch v-model="is_display_high_score" />
                         </div>
-                        <DataTable :value="target_score" size="small" stripedRows rowHove>
+                        <DataTable :value="target_score" size="small" stripedRows>
                             <Column class="!text-center" field="name">
                                 <template #header>
                                     <p class="w-full text-center font-bold">评价</p>
@@ -66,6 +72,9 @@
                     <FinalScore :final_score="final_score" />
                 </template>
             </Card>
+            <p class="mt-4" v-if="difficulty_select < 3">
+                ※ 带*属性尚未核实，请以实际情况为准。
+            </p>
         </div>
     </div>
 </template>
@@ -116,10 +125,18 @@ const parameters = ref<{ [key: string]: number | null }>({
 const total_score = ref<number | null>(null)
 const rank = ref(0)
 
+const is_first = ref(false)
 const is_display_high_score = ref(false)
 
+const rank_bonus_parameter = computed(() => {
+    if (is_first.value && rank.value < 3 && difficulty.value && difficulty.value.id < 3) {
+        return 10
+    }
+    return mode_external_data.rank_bonus[rank.value].parameter
+})
+
 const final_parameters = computed(() => {
-    const add_parameter = mode_external_data.rank_bonus[rank.value].parameter
+    const add_parameter = rank_bonus_parameter.value
     const max_parameter = difficulty.value ? difficulty.value.max_parameter : 1000
     const value: { [key: string]: number } = {
         vocal: parameters.value.vocal !== null ? Math.min(parameters.value.vocal + add_parameter, max_parameter) : -1,
