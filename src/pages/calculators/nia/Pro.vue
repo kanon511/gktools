@@ -159,7 +159,7 @@ const difficulty: NiaMasData = await fetch(import.meta.env.VITE_DATA_URL + (diff
 const idol_select_ref = ref()
 const idol = computed(() => idol_select_ref.value?.select_option)
 const favorable = ref(difficulty.favorable_fans_bonus_percentage.default ?
-    difficulty.favorable_fans_bonus_percentage.default.toString() : 0)
+    difficulty.favorable_fans_bonus_percentage.default : 0)
 const favorable_fans_bonus = computed(() => {
     if (idol.value && difficulty.favorable_fans_bonus_percentage[favorable.value.toString()]) {
         return difficulty.favorable_fans_bonus_percentage[favorable.value.toString()] / 100
