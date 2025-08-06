@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Avatar: typeof import('primevue/avatar')['default']
+    Badge: typeof import('primevue/badge')['default']
     Button: typeof import('primevue/button')['default']
     Card: typeof import('primevue/card')['default']
     Column: typeof import('primevue/column')['default']
@@ -16,6 +17,7 @@ declare module 'vue' {
     DifficultySelect: typeof import('./src/components/calculator/DifficultySelect.vue')['default']
     FinalScore: typeof import('./src/components/calculator/FinalScore.vue')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']
+    IconTooltip: typeof import('./src/components/IconTooltip.vue')['default']
     IdolList: typeof import('./src/components/IdolList.vue')['default']
     IdolSelect: typeof import('./src/components/IdolSelect.vue')['default']
     Image: typeof import('primevue/image')['default']
@@ -34,6 +36,5 @@ declare module 'vue' {
     StageScoreInfoTable: typeof import('./src/components/calculator/StageScoreInfoTable.vue')['default']
     TextCard: typeof import('./src/components/TextCard.vue')['default']
     ThemeSwitcher: typeof import('./src/components/ThemeSwitcher.vue')['default']
-    Toolbar: typeof import('primevue/toolbar')['default']
   }
 }

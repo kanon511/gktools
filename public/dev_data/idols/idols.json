@@ -126,9 +126,9 @@
         "icon": "",
         "type": "radical",
         "specialty": {
-            "vocal": 3,
-            "dance": 2,
-            "visual": 1
+            "vocal": 1,
+            "dance": 3,
+            "visual": 2
         }
     }
 ]

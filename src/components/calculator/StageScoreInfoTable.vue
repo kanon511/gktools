@@ -1,5 +1,19 @@
 <template>
     <Panel class="mb-2" header="舞台得分信息" toggleable collapsed>
+        <template #header>
+            <div class="flex flex-row items-center">
+                <p>舞台得分信息</p>
+                <IconTooltip class="ml-2">
+                    <p>试镜结束后属性与粉丝数的增加是分段线性增加。<br>
+                        其中随着得分增加，属性和粉丝数的增量逐渐减小。<br>
+                        表中列出了所选试镜达到对应得分时所获取的属性/粉丝数。其中：<br>
+                        属性的对应得分：对应属性的得分。<br>
+                        粉丝数的对应得分：总分<br>
+                        ※ 通常来说，有属性或者总分达不到第1次衰减的得分时，建议打低一级试镜。
+                    </p>
+                </IconTooltip>
+            </div>
+        </template>
         <DataTable :value="stage_score_info" size="small" stripedRows rowGroupMode="rowspan" groupRowsBy="name">
             <Column class="!text-center" field="name" />
             <Column class="!text-center" field="sub_name" />
@@ -20,6 +34,7 @@
 <script setup lang="ts">
 import { PARAMETER } from '@/constants/parameter'
 import { ref, watchEffect } from 'vue'
+import IconTooltip from '../IconTooltip.vue'
 
 const { idol, stage } = defineProps({
     idol: {

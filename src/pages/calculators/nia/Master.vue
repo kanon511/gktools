@@ -34,7 +34,7 @@
                             <label for="on_label">星星数</label>
                         </FloatLabel>
                     </ParameterInput>
-                    <p>试验</p>
+                    <p>试镜</p>
                     <SelectButton class="my-2" v-model="audition_select" :options="audition_options" optionLabel="name"
                         optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <p>舞台</p>
@@ -140,7 +140,7 @@
                 </template>
             </Card>
             <p class="mt-4">
-                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。如果出现错误，请反馈给作者。<br>
+                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。反馈错误或建议请加QQ群：262823155。<br>
                 ※ 数据来源：<a href="https://seesaawiki.jp/gakumasu/d/N.I.A/%a5%de%a5%b9%a5%bf%a1%bc"
                     target="_blank">WIKI</a> By
                 Kanon511

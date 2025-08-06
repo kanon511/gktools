@@ -24,7 +24,7 @@
                         <InputNumber v-model="total_score" :useGrouping="false" :invalid="total_score === null" fluid />
                         <label for="on_label">总分</label>
                     </FloatLabel>
-                    <p>排名</p>
+                    <p class="mt-4">排名</p>
                     <SelectButton class="my-2" v-model="rank" :options="rank_options" optionLabel="name"
                         optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid />
                 </template>
@@ -101,6 +101,7 @@ import { PARAMETER } from '@/constants'
 import ToggleSwitch from 'primevue/toggleswitch';
 
 import mode_data from '@/data/mode.json'
+import Tooltip from '@/components/IconTooltip.vue'
 
 const rank_options = ref([
     { name: '1位', value: 0 },
