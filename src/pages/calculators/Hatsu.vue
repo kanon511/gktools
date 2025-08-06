@@ -101,7 +101,6 @@ import { PARAMETER } from '@/constants'
 import ToggleSwitch from 'primevue/toggleswitch';
 
 import mode_data from '@/data/mode.json'
-import Tooltip from '@/components/IconTooltip.vue'
 
 const rank_options = ref([
     { name: '1位', value: 0 },
