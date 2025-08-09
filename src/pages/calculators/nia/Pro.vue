@@ -34,7 +34,7 @@
                     <p>舞台</p>
                     <SelectButton class="my-2" v-model="stage_select" :options="stage_options" optionLabel="name"
                         optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
-                    <StageScoreInfoTable :idol="idol" :stage="stage" />
+                    <StageScoreInfoTable :idol="idol" :stage="stage" :fans_multiple="(1 + favorable_fans_bonus) / 1.5" />
                     <p>试镜中得分</p>
                     <ParameterInput :parameters="scores" />
                     <!-- <p>是否为一位</p>
