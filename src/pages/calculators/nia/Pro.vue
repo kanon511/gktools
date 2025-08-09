@@ -218,7 +218,7 @@ const base_increase_parameters = computed(() => {
     value.fans = value.fans === -1 ? -1 : floor(piecewiseLinearInterpolation(
         (stage.value as { [key: string]: any }).score_to_fans,
         value.fans
-    ))
+    ) / 1.5)// 数据默认值是20级好感度，除以1.5修正到10级
     if (!is_first.value) {
         value.fans = 0
     }
