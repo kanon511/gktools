@@ -34,7 +34,8 @@
                     <p>舞台</p>
                     <SelectButton class="my-2" v-model="stage_select" :options="stage_options" optionLabel="name"
                         optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
-                    <StageScoreInfoTable :idol="idol" :stage="stage" :fans_multiple="(1 + favorable_fans_bonus) / 1.5" />
+                    <StageScoreInfoTable :idol="idol" :stage="stage"
+                        :fans_multiple="(1 + favorable_fans_bonus) / 1.5" />
                     <p>试镜中得分</p>
                     <ParameterInput :parameters="scores" />
                     <!-- <p>是否为一位</p>
@@ -161,7 +162,7 @@ const idol = computed(() => idol_select_ref.value?.select_option)
 const favorable = ref(difficulty.favorable_fans_bonus_percentage.default ?
     difficulty.favorable_fans_bonus_percentage.default : 0)
 const favorable_fans_bonus = computed(() => {
-    if (idol.value && difficulty.favorable_fans_bonus_percentage[favorable.value.toString()]) {
+    if (idol.value && difficulty.favorable_fans_bonus_percentage[favorable.value.toString()] !== undefined) {
         return difficulty.favorable_fans_bonus_percentage[favorable.value.toString()] / 100
     }
     return -1
