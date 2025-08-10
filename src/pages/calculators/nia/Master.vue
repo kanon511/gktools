@@ -53,6 +53,88 @@
         <div class="flex flex-col items-center w-full max-w-[600px] xl:ml-4">
             <Card class="mt-4 w-full">
                 <template #content>
+                    <Panel header="推荐得分表" toggleable>
+                        <div class="flex flex-row items-center">
+                            <p>优先选项</p>
+                            <IconTooltip class="ml-2">
+                                <p>注意：选择高结算属性优先，同样得分下时，其他剧本有可能同时有高属性和低得分要求，该选项仅能保证在特定得分下获得属性值最高。<br>
+                                    输入推荐得分后请切换其他试镜以确实是否含有更好选择。<br>
+                                    ※ 该系统目前会误差，大约在+-10终评左右，点击右侧按钮可以一键输入推荐得分验证并修正。</p>
+                            </IconTooltip>
+                        </div>
+                        <SelectButton class="my-2" v-model="priority_select" :options="priority_options"
+                            optionLabel="name" optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
+                        <!-- <p>试镜中倍率</p>
+                        <ParameterMultipleInput :parameters="stage_score_bonus" />
+                        <div class="flex flex-row items-center mb-2">
+                            <p>卡组类型</p>
+                            <IconTooltip class="ml-2">
+                                <p>用于设置卡组被动得分占比的预设值，如果卡组体系较为复杂，请使用高级选项。<br>
+                                    不设置类型视为没有卡组被动得分。
+                                </p>
+                            </IconTooltip>
+                            <FloatLabel variant="on" class="w-1/4 mx-2">
+                                <Select class="w-full" v-model="average_score_multiplier_select"
+                                    :options="average_score_multiplier_options" optionLabel="name" optionValue="id" />
+                                <label for="on_label">类型</label>
+                            </FloatLabel>
+                            <p class="mr-2">高级选项</p>
+                            <ToggleSwitch v-model="is_average_score_multiplier_option" />
+                        </div>
+                        <div class="flex flex-row items-center mb-2" v-if="is_average_score_multiplier_option">
+                            <p class="w-28">卡组被动得分占比</p>
+                            <IconTooltip class="ml-2">
+                                <p>卡组在各回合中被动得分在总得分中的占比，如果不会设置请使用预设值。<br>
+                                    仅对预期得分的推测有略微影响，设置适当可以提高推测的合理性。<br>
+                                    被动/不可操控的得分越高，得分越平均，该值越高，例如好印象。<br>
+                                    主动/可操控的得分越高，得分越极端，该值越低，例如干劲。<br>
+                                </p>
+                            </IconTooltip>
+                            <Slider v-model="average_score_multiplier" :step="0.01" :max="1" class="w-full mx-4" />
+                            <div class="w-32">
+                                <InputNumber v-model="average_score_multiplier" :useGrouping="false" fluid />
+                            </div>
+                        </div> -->
+                        <p>推荐得分</p>
+                        <DataTable class="text-sm" :value="recommend_score_table" size="small" stripedRows
+                            rowGroupMode="rowspan" groupRowsBy="name">
+                            <Column class="!text-center" field="rank">
+                                <template #header>
+                                    <p class="w-full text-center font-bold">评价</p>
+                                </template>
+                            </Column>
+                            <Column v-for="name in PARAMETER.NAMES" class="!text-center" :field="name">
+                                <template #header>
+                                    <p class="w-full text-center font-bold">{{ name }}</p>
+                                </template>
+                            </Column>
+                            <Column class="!text-center" field="total_score">
+                                <template #header>
+                                    <p class="w-full text-center font-bold">总分</p>
+                                </template>
+                            </Column>
+                            <Column class="!text-center" field="total_parameter">
+                                <template #header>
+                                    <p class="w-full text-center font-bold">总获得属性</p>
+                                </template>
+                            </Column>
+                            <Column class="!text-center" field="stage">
+                                <template #header>
+                                    <p class="w-full text-center font-bold">剧本</p>
+                                </template>
+                            </Column>
+                            <Column class="!text-end">
+                                <template #body="{ data }">
+                                    <Button icon="pi pi-check" @click="selectRow(data)" severity="secondary"
+                                        rounded></Button>
+                                </template>
+                            </Column>
+                        </DataTable>
+                    </Panel>
+                </template>
+            </Card>
+            <Card class="mt-4 w-full">
+                <template #content>
                     <p>试镜获得属性 (vo/da/vi/粉丝数)</p>
                     <div class="flex flex-row mt-2">
                         <TextCard theme="red">
@@ -168,12 +250,16 @@ interface NiaMasData {
 }
 
 import { computed, ref, watch } from 'vue'
-import { floor, piecewiseLinearInterpolation } from '@/utils/math'
+import { dictionarySum, floor, piecewiseLinearInterpolation } from '@/utils/math'
 import { PARAMETER } from '@/constants'
 
 import ToggleSwitch from 'primevue/toggleswitch';
 
 import mode_data from '@/data/mode.json'
+// import average_score_multiplier_data from '@/data/player_cards_type.json'
+
+const rank_data: { [key: string]: number } = await fetch(import.meta.env.VITE_DATA_URL + "rank.json")
+    .then(res => res.json())
 
 const mode = mode_data.find(item => item.id === 2)
 
@@ -223,6 +309,234 @@ const scores = ref<{ [key: string]: number | null }>({
 })
 
 const is_first = ref(true)
+
+const priority_options = ref([
+    { id: 1, name: '低得分要求优先' },
+    { id: 2, name: '高结算属性优先' },
+])
+const priority_select = ref(priority_options.value[0].id)
+
+// const stage_score_bonus = ref({
+//     vocal: null,
+//     dance: null,
+//     visual: null,
+// })
+
+const recommend_score_table = computed(() => {
+    const value = []
+    if (!idol.value || parameters.value.fans === null) return []
+    for (const rank in rank_data) {
+        let rank_value
+        for (const stage of stage_options.value) {
+            if (stage.disabled) continue
+            const calculate_parameter = (score: { [key: string]: number }) => {
+                const value: { [key: string]: number } = { fans: 0 }
+                for (const key of PARAMETER.NAMES) {
+                    if (parameters.value[key] === null || parameter_bonus.value[key] === null || initial_item_bonus.value === null) {
+                        return null
+                    }
+                    else {
+                        value[key] = floor(piecewiseLinearInterpolation(
+                            [[0, 0], ...(stage as { [key: string]: any })[idol.value.type][idol.value.specialty[key].toString()]],
+                            score[key]
+                        ))
+                        value[key] += floor(value[key] * parameter_bonus.value[key] / 100) +
+                            floor(value[key] * initial_item_bonus.value / 100)
+                        value.fans += score[key]
+                    }
+                }
+                value.fans = floor(piecewiseLinearInterpolation(
+                    (stage as { [key: string]: any }).score_to_fans,
+                    value.fans
+                ))
+                if (!is_first.value) {
+                    value.fans = 0
+                }
+                return value
+            }
+            const run_func = (score: { [key: string]: number }) => {
+                console.log(score)
+                const max_growth_rate_parameter = {
+                    name: '',
+                    value: 0,
+                    max_add_score: 0,
+                }
+                for (const key of PARAMETER.NAMES) {
+                    let growth_rate = 0
+                    let max_add_score = 0
+                    const idol_parameter_rank = idol.value.specialty[key]
+                    const stage_parameter_list = [[0, 0], ...(stage as { [key: string]: any })[idol.value.type][idol_parameter_rank.toString()]]
+
+                    for (let i = 0; i < stage_parameter_list.length - 1; i++) {
+                        const [start_score, start_parameter] = stage_parameter_list[i]
+                        const [end_score, end_parameter] = stage_parameter_list[i + 1]
+                        if (score[key] >= start_score && score[key] < end_score) {
+                            growth_rate = (end_parameter - start_parameter) / (end_score - start_score)
+                            max_add_score = end_score - score[key]
+                            break
+                        }
+                    }
+
+                    if (growth_rate > max_growth_rate_parameter.value) {
+                        max_growth_rate_parameter.name = key
+                        max_growth_rate_parameter.value = growth_rate
+                        max_growth_rate_parameter.max_add_score = max_add_score
+                    }
+                }
+
+                const growth_rate_fans = {
+                    value: 0,
+                    max_add_score: 0,
+                }
+                const stage_fans_list = (stage as { [key: string]: any }).score_to_fans
+                for (let i = 0; i < stage_fans_list.length - 1; i++) {
+                    const [start_score, start_fans] = stage_fans_list[i]
+                    const [end_score, end_fans] = stage_fans_list[i + 1]
+                    if (dictionarySum(score) >= start_score && dictionarySum(score) < end_score) {
+                        growth_rate_fans.value = (end_fans - start_fans) / (end_score - start_score)
+                        growth_rate_fans.max_add_score = end_score - dictionarySum(score)
+                        break
+                    }
+                }
+                console.log(max_growth_rate_parameter, growth_rate_fans)
+
+                let max_add_score = 0
+                if (max_growth_rate_parameter.value <= 0) {
+                    max_add_score = growth_rate_fans.max_add_score
+                    max_growth_rate_parameter.name = (() => {
+                        for (const key of PARAMETER.NAMES) {
+                            if (idol.value.specialty[key] === 1) return key
+                        }
+                        return ""
+                    })()
+                }
+                else if (growth_rate_fans.value <= 0) {
+                    max_add_score = max_growth_rate_parameter.max_add_score
+                }
+                else {
+                    max_add_score = Math.min(max_growth_rate_parameter.max_add_score, growth_rate_fans.max_add_score)
+                }
+
+                const calculate_score = (scores: { [key: string]: number }) => {
+                    const parameter = calculate_parameter(scores)
+                    console.log(parameter, scores, stage.name, "calculate_score")
+                    let score = 0
+                    if (parameter === null) return score
+                    for (const key in parameter) {
+                        if (parameters.value[key] === null) return score
+                        parameter[key] += parameters.value[key]
+                    }
+
+                    score = floor((parameter.vocal + parameter.dance + parameter.visual) * 2.3)
+                        + floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], parameter.fans))
+
+                    if (is_enhanced_week.value) {
+                        if (star.value === null) {
+                            return -1
+                        }
+                        score = floor(score * 0.7) + floor(star.value * 10.82)
+                    }
+                    console.log(score)
+                    return score
+                }
+                const value: { [key: string]: number } = { ...score }
+                value[max_growth_rate_parameter.name] += max_add_score
+                const max_score = calculate_score(value)
+                console.log(value, max_score, "run_func")
+
+                if (max_add_score <= 0) return null
+
+                if (max_score >= rank_data[rank]) {
+                    const raw_score = calculate_score(score)
+                    if (rank_data[rank] <= raw_score) {
+                        return { ...score }
+                    }
+                    const growth_rate = (max_score - raw_score) / max_add_score
+                    const add_score = (rank_data[rank] - raw_score) / growth_rate
+                    console.log(growth_rate, max_score, raw_score, max_add_score, add_score, rank_data[rank], "run_func1")
+                    const value: { [key: string]: number } = { ...score }
+                    value[max_growth_rate_parameter.name] += floor(add_score)
+                    return value
+                }
+                else {
+                    return run_func(value)
+                }
+            }
+            const score = run_func({
+                vocal: 0,
+                dance: 0,
+                visual: 0,
+            })
+
+            if (score === null) {
+                continue
+            }
+
+            const parameter = calculate_parameter(score)
+            if (parameter === null) {
+                return []
+            }
+            const value = {
+                rank,
+                ...score,
+                total_score: dictionarySum(score),
+                total_parameter: parameter["vocal"] + parameter["dance"] + parameter["visual"],
+                stage: stage.name,
+            }
+            console.log(value)
+            if (!rank_value) {
+                rank_value = value
+            }
+            else {
+                if (priority_select.value === 1) {
+                    if (value.total_score < rank_value.total_score) {
+                        rank_value = value
+                    }
+                }
+                else if (priority_select.value === 2) {
+                    if (value.total_parameter > rank_value.total_parameter) {
+                        rank_value = value
+                    }
+                }
+            }
+        }
+        if (rank_value) {
+            if (value.length > 0 && value[value.length - 1].total_score === 0 && rank_value.total_score === 0) {
+                value.pop()
+            }
+            value.push(rank_value)
+        }
+    }
+    value.reverse()
+    console.log(value)
+    return value
+})
+
+// const average_score_multiplier_options = ref(average_score_multiplier_data)
+// const average_score_multiplier_select = ref()
+// const average_score_multiplier = ref(0)
+// watch(average_score_multiplier_select, (new_value) => {
+//     const value = average_score_multiplier_options.value.find(item => item.id === new_value)
+//     if (value) {
+//         average_score_multiplier.value = value.average_score_multiplier
+//     }
+// })
+
+// const is_average_score_multiplier_option = ref(false)
+// watch(is_average_score_multiplier_option, () => {
+//     const value = average_score_multiplier_options.value.find(item => item.id === average_score_multiplier_select.value)
+//     if (value) {
+//         average_score_multiplier.value = value.average_score_multiplier
+//     }
+// })
+
+function selectRow(data: { [key: string]: any }) {
+    for (const key of PARAMETER.NAMES) {
+        scores.value[key] = data[key]
+    }
+    const stage_id = stage_options.value.find(item => item.name === data.stage)?.id
+    stage_select.value = stage_id ? stage_id : stage_options.value[stage_options.value.length - 1].id
+}
 
 const base_increase_parameters = computed(() => {
     const value: { [key: string]: number } = { fans: 0 }

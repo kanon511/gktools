@@ -33,6 +33,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SelectButton: typeof import('primevue/selectbutton')['default']
+    Slider: typeof import('primevue/slider')['default']
     StageScoreInfoTable: typeof import('./src/components/calculator/StageScoreInfoTable.vue')['default']
     TextCard: typeof import('./src/components/TextCard.vue')['default']
     ThemeSwitcher: typeof import('./src/components/ThemeSwitcher.vue')['default']

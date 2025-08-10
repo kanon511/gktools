@@ -104,10 +104,8 @@ const adjustPosition = () => {
     }
 
     // 调整纵向位置
-    console.log(triggerRect.top, tooltipRect.height, tooltipRect.bottom, viewportHeight)
     if (triggerRect.top + tooltipRect.height >= viewportHeight) {
         verticalOffset = viewportHeight - (triggerRect.top + tooltipRect.height) - 8
-        console.log('越界', verticalOffset)
     } else if (triggerRect.top < 0) {
         verticalOffset = -triggerRect.top + 8
     }
@@ -116,7 +114,6 @@ const adjustPosition = () => {
     tooltipStyle.value = {
         transform: `translateY(${verticalOffset}px)`
     }
-    console.log(nextTick(() => tooltipRect.bottom))
 }
 </script>
 
