@@ -59,7 +59,7 @@
                             <IconTooltip class="ml-2">
                                 <p>注意：选择高结算属性优先，同样得分下时，其他剧本有可能同时有高属性和低得分要求，该选项仅能保证在特定得分下获得属性值最高。<br>
                                     输入推荐得分后请切换其他试镜以确实是否含有更好选择。<br>
-                                    ※ 该系统目前会误差，大约在+-10终评左右，点击右侧按钮可以一键输入推荐得分验证并修正。</p>
+                                    点击右侧按钮可以一键输入推荐得分验证并修正。</p>
                             </IconTooltip>
                         </div>
                         <SelectButton class="my-2" v-model="priority_select" :options="priority_options"
