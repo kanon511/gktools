@@ -355,7 +355,6 @@ const recommend_score_table = computed(() => {
                 return value
             }
             const run_func = (score: { [key: string]: number }) => {
-                console.log(score)
                 const max_growth_rate_parameter = {
                     name: '',
                     value: 0,
@@ -398,7 +397,6 @@ const recommend_score_table = computed(() => {
                         break
                     }
                 }
-                console.log(max_growth_rate_parameter, growth_rate_fans)
 
                 let max_add_score = 0
                 if (max_growth_rate_parameter.value <= 0) {
@@ -419,12 +417,15 @@ const recommend_score_table = computed(() => {
 
                 const calculate_score = (scores: { [key: string]: number }) => {
                     const parameter = calculate_parameter(scores)
-                    console.log(parameter, scores, stage.name, "calculate_score")
                     let score = 0
                     if (parameter === null) return score
                     for (const key in parameter) {
                         if (parameters.value[key] === null) return score
                         parameter[key] += parameters.value[key]
+
+                        if (key !== "fans") {
+                            parameter[key] = Math.min(parameter[key], difficulty.max_parameter ?? 0)
+                        }
                     }
 
                     score = floor((parameter.vocal + parameter.dance + parameter.visual) * 2.3)
@@ -436,27 +437,61 @@ const recommend_score_table = computed(() => {
                         }
                         score = floor(score * 0.7) + floor(star.value * 10.82)
                     }
-                    console.log(score)
                     return score
                 }
                 const value: { [key: string]: number } = { ...score }
                 value[max_growth_rate_parameter.name] += max_add_score
                 const max_score = calculate_score(value)
-                console.log(value, max_score, "run_func")
 
                 if (max_add_score <= 0) return null
 
-                if (max_score >= rank_data[rank]) {
+                const calculate_final_score = (score: { [key: string]: number }, max_add_score: number) => {
+                    // 二分法
                     const raw_score = calculate_score(score)
-                    if (rank_data[rank] <= raw_score) {
+                    if (raw_score >= rank_data[rank]) {
                         return { ...score }
                     }
-                    const growth_rate = (max_score - raw_score) / max_add_score
-                    const add_score = (rank_data[rank] - raw_score) / growth_rate
-                    console.log(growth_rate, max_score, raw_score, max_add_score, add_score, rank_data[rank], "run_func1")
+
                     const value: { [key: string]: number } = { ...score }
-                    value[max_growth_rate_parameter.name] += floor(add_score)
-                    return value
+                    const add_score = floor(max_add_score / 2)
+                    value[max_growth_rate_parameter.name] += add_score
+                    const value_score = calculate_score(value)
+
+                    if (add_score === 0) {
+                        const value: { [key: string]: number } = { ...score }
+                        value[max_growth_rate_parameter.name] += 1
+                        return value
+                    }
+                    if (value_score >= rank_data[rank]) {
+                        return calculate_final_score(score, add_score)
+                    }
+                    else {
+                        return calculate_final_score(value, max_add_score - add_score)
+                    }
+                    // 注释部分为相等时直接返回结果，不是最小值，但是计算次数少
+                    // if (value_score > rank_data[rank]) {
+                    //     return calculate_final_score(score, add_score)
+                    // }
+                    // else if (value_score < rank_data[rank]) {
+                    //     return calculate_final_score(value, max_add_score - add_score)
+                    // }
+                    // else {
+                    //     return value
+                    // }
+                }
+
+                if (max_score >= rank_data[rank]) {
+                    // const raw_score = calculate_score(score)
+                    // if (rank_data[rank] <= raw_score) {
+                    //     return { ...score }
+                    // }
+                    // const growth_rate = (max_score - raw_score) / max_add_score
+                    // const add_score = (rank_data[rank] - raw_score) / growth_rate
+                    // console.log(growth_rate, max_score, raw_score, max_add_score, add_score, rank_data[rank], "run_func1")
+                    // const value: { [key: string]: number } = { ...score }
+                    // value[max_growth_rate_parameter.name] += floor(add_score)
+                    // return value
+                    return calculate_final_score(score, max_add_score)
                 }
                 else {
                     return run_func(value)
@@ -483,7 +518,6 @@ const recommend_score_table = computed(() => {
                 total_parameter: parameter["vocal"] + parameter["dance"] + parameter["visual"],
                 stage: stage.name,
             }
-            console.log(value)
             if (!rank_value) {
                 rank_value = value
             }
@@ -508,7 +542,6 @@ const recommend_score_table = computed(() => {
         }
     }
     value.reverse()
-    console.log(value)
     return value
 })
 
