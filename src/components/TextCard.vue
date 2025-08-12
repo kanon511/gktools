@@ -6,6 +6,7 @@
             'bg-green-100 border-green-600 text-green-600': theme === 'green',
             'bg-pink-100 border-pink-600 text-pink-600': theme === 'red',
             'bg-yellow-100 border-yellow-600 text-orange-600': theme === 'yellow',
+            'bg-fuchsia-100 border-fuchsia-600 text-fuchsia-600': theme === 'purple',
         }
     ]">
         <p class="text-lg text-center font-semibold">

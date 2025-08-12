@@ -14,7 +14,8 @@
                 </IconTooltip>
             </div>
         </template>
-        <DataTable :value="stage_score_info" size="small" stripedRows rowGroupMode="rowspan" groupRowsBy="name">
+        <DataTable :class="text_class" :value="stage_score_info" size="small" stripedRows rowGroupMode="rowspan"
+            groupRowsBy="name">
             <Column class="!text-center" field="name" />
             <Column class="!text-center" field="sub_name" />
             <Column v-for="key of PARAMETER.NAMES" class="!text-center" :field="key">
@@ -27,6 +28,11 @@
                     <p class="w-full text-center font-bold">粉丝数</p>
                 </template>
             </Column>
+            <Column v-if="is_enhanced_month" class="!text-center" field="star">
+                <template #header>
+                    <p class="w-full text-center font-bold">星星数</p>
+                </template>
+            </Column>
         </DataTable>
     </Panel>
 </template>
@@ -37,7 +43,7 @@ import { ref, watchEffect } from 'vue'
 import IconTooltip from '../IconTooltip.vue'
 import { floor } from '@/utils/math'
 
-const { idol, stage, fans_multiple } = defineProps({
+const { idol, stage, fans_multiple, is_enhanced_month, score_to_star } = defineProps({
     idol: {
         type: [Object],
     },
@@ -48,11 +54,22 @@ const { idol, stage, fans_multiple } = defineProps({
     fans_multiple: {
         type: Number,
         default: 1
+    },
+    is_enhanced_month: {
+        type: Boolean,
+        default: false
+    },
+    score_to_star: {
+        type: Array,
+        default: () => []
     }
 })
 
 const stage_score_info = ref()
+const text_class = ref("")
 watchEffect(() => {
+    text_class.value = is_enhanced_month ? "text-sm" : ""
+
     const value: { [key: string]: any }[] = []
     if (!idol) {
         stage_score_info.value = value
@@ -66,10 +83,7 @@ watchEffect(() => {
             collation_value[key] = [[0, 0], ...collation_value[key]]
         }
     }
-    // collation_value.fans = [...(stage as { [key: string]: any }).score_to_fans]
-    // for (const value of collation_value.fans) {
-    //     value[1] *= fans_multiple
-    // }
+
     collation_value.fans = (() => {
         const result = []
         for (const [score, fans] of (stage as { [key: string]: any }).score_to_fans) {
@@ -77,10 +91,23 @@ watchEffect(() => {
         }
         return result
     })()
-
     if (collation_value.fans.length > 0 && collation_value.fans[0][0] !== 0) {
         collation_value.fans = [[0, 0], ...collation_value.fans]
     }
+
+    if (is_enhanced_month) {
+        collation_value.star = (() => {
+            const result = []
+            for (const x of score_to_star) {
+                result.push(x)
+            }
+            return result
+        })()
+        if (collation_value.star.length > 0 && collation_value.star[0][0] !== 0) {
+            collation_value.star = [[0, 0], ...collation_value.star]
+        }
+    }
+
     let max_line = 0
     for (const key in collation_value) {
         max_line = Math.max(max_line, collation_value[key].length)

@@ -7,8 +7,11 @@
                     <DifficultySelect :select_id="2" :difficulty_options="difficulty_options" />
                     <IdolSelect class="my-4" ref="idol_select_ref" />
                     <div class="flex flex-row items-center mb-2">
-                        <p class="mr-2">强化月间</p>
+                        <p class="mr-2">强化月间·星</p>
                         <ToggleSwitch v-model="is_enhanced_week" />
+                        <IconTooltip class="ml-2">
+                            <p>除了mas的期末试镜以外，其他试镜的星星数的计算有比较大的误差，特别是得分未达到星星数上限要求时。</p>
+                        </IconTooltip>
                     </div>
                     <p>倍率</p>
                     <ParameterMultipleInput :parameters="parameter_bonus">
@@ -30,7 +33,8 @@
                             <label for="on_label">粉丝数</label>
                         </FloatLabel>
                         <FloatLabel class="ml-2" variant="on" v-if="is_enhanced_week">
-                            <InputNumber v-model="star" :useGrouping="false" :invalid="star === null" fluid />
+                            <InputNumber v-model="parameters.star" :useGrouping="false"
+                                :invalid="parameters.star === null" fluid />
                             <label for="on_label">星星数</label>
                         </FloatLabel>
                     </ParameterInput>
@@ -40,7 +44,8 @@
                     <p>舞台</p>
                     <SelectButton class="my-2" v-model="stage_select" :options="stage_options" optionLabel="name"
                         optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
-                    <StageScoreInfoTable :idol="idol" :stage="stage" />
+                    <StageScoreInfoTable :idol="idol" :stage="stage" :is_enhanced_month="is_enhanced_week"
+                        :score_to_star="audition?.score_to_star" />
                     <p>试镜中得分</p>
                     <ParameterInput :parameters="scores" />
                     <!-- <p>是否为一位</p>
@@ -126,7 +131,7 @@
                             <Column class="!text-end">
                                 <template #body="{ data }">
                                     <Button icon="pi pi-check" @click="selectRow(data)" severity="secondary"
-                                        rounded></Button>
+                                        size="small" rounded></Button>
                                 </template>
                             </Column>
                         </DataTable>
@@ -135,7 +140,7 @@
             </Card>
             <Card class="mt-4 w-full">
                 <template #content>
-                    <p>试镜获得属性 (vo/da/vi/粉丝数)</p>
+                    <p>试镜获得属性 (vo/da/vi/粉丝数{{ is_enhanced_week ? '/星星数' : '' }})</p>
                     <div class="flex flex-row mt-2">
                         <TextCard theme="red">
                             {{ increase_parameters.vocal !== -1 ? '+' + increase_parameters.vocal : '-' }}
@@ -148,6 +153,9 @@
                         </TextCard>
                         <TextCard theme="green">
                             {{ increase_parameters.fans !== -1 ? '+' + increase_parameters.fans : '-' }}
+                        </TextCard>
+                        <TextCard v-if="is_enhanced_week" theme="purple">
+                            {{ increase_parameters.star !== -1 ? '+' + increase_parameters.star : '-' }}
                         </TextCard>
                     </div>
                     <Panel header="获得属性详细" toggleable collapsed>
@@ -163,9 +171,6 @@
                                 {{ base_increase_parameters.visual !== -1 ? '+' + base_increase_parameters.visual : '-'
                                 }}
                             </TextCard>
-                            <TextCard theme="green">
-                                {{ base_increase_parameters.fans !== -1 ? '+' + base_increase_parameters.fans : '-' }}
-                            </TextCard>
                         </div>
                         <p>属性加成属性</p>
                         <div class="flex flex-row mt-2">
@@ -178,9 +183,6 @@
                             <TextCard theme="yellow">
                                 {{ bonu_increase_parameters.visual !== -1 ? '+' + bonu_increase_parameters.visual : '-'
                                 }}
-                            </TextCard>
-                            <TextCard theme="green">
-                                -
                             </TextCard>
                         </div>
                         <p>初始道具加成属性</p>
@@ -198,12 +200,9 @@
                                     initial_item_bonu_increase_parameters.visual : '-'
                                 }}
                             </TextCard>
-                            <TextCard theme="green">
-                                -
-                            </TextCard>
                         </div>
                     </Panel>
-                    <p class="mt-2">最终属性 (vo/da/vi/粉丝数)</p>
+                    <p class="mt-2">最终属性 (vo/da/vi/粉丝数{{ is_enhanced_week ? '/星星数' : '' }})</p>
                     <div class="flex flex-row mt-2">
                         <TextCard theme="red">
                             {{ final_parameters.vocal !== -1 ? final_parameters.vocal : '-' }}
@@ -216,6 +215,9 @@
                         </TextCard>
                         <TextCard theme="green">
                             {{ final_parameters.fans !== -1 ? final_parameters.fans : '-' }}
+                        </TextCard>
+                        <TextCard v-if="is_enhanced_week" theme="purple">
+                            {{ final_parameters.star !== -1 ? final_parameters.star : '-' }}
                         </TextCard>
                     </div>
                     <FinalScore :final_score="final_score" />
@@ -244,9 +246,14 @@ interface NiaMasData {
             balance?: any,
             radical?: any,
             score_to_fans?: [number, number][],
-        }[]
+        }[],
+        score_to_star: [number, number][]
     }[],
-    fans_to_final_score: [number, number][]
+    fans_to_final_score: [number, number][],
+    enhanced_month: {
+        max_star: number,
+        star_to_final_score_multiplier: number
+    }
 }
 
 import { computed, ref, watch } from 'vue'
@@ -280,15 +287,15 @@ const parameter_bonus = ref<{ [key: string]: number | null }>({
     dance: null,
     visual: null,
 })
-const initial_item_bonus = ref(null)
+const initial_item_bonus = ref(40)
 
 const parameters = ref<{ [key: string]: number | null }>({
     vocal: null,
     dance: null,
     visual: null,
     fans: null,
+    star: null,
 })
-const star = ref(null)
 
 const audition_options = computed(() => difficulty.audition)
 const audition_select = ref(audition_options.value[audition_options.value.length - 1].id)
@@ -324,15 +331,17 @@ const priority_select = ref(priority_options.value[0].id)
 
 const recommend_score_table = computed(() => {
     const value = []
-    if (!idol.value || parameters.value.fans === null) return []
+    if (!idol.value || parameters.value.fans === null || initial_item_bonus.value === null) return []
+    if (is_enhanced_week.value && parameters.value.star === null) return []
     for (const rank in rank_data) {
         let rank_value
         for (const stage of stage_options.value) {
             if (stage.disabled) continue
             const calculate_parameter = (score: { [key: string]: number }) => {
                 const value: { [key: string]: number } = { fans: 0 }
+                let total_score = 0
                 for (const key of PARAMETER.NAMES) {
-                    if (parameters.value[key] === null || parameter_bonus.value[key] === null || initial_item_bonus.value === null) {
+                    if (parameters.value[key] === null || parameter_bonus.value[key] === null) {
                         return null
                     }
                     else {
@@ -342,13 +351,22 @@ const recommend_score_table = computed(() => {
                         ))
                         value[key] += floor(value[key] * parameter_bonus.value[key] / 100) +
                             floor(value[key] * initial_item_bonus.value / 100)
-                        value.fans += score[key]
+                        total_score += score[key]
                     }
                 }
+
                 value.fans = floor(piecewiseLinearInterpolation(
                     (stage as { [key: string]: any }).score_to_fans,
-                    value.fans
+                    total_score
                 ))
+
+                if (is_enhanced_week.value && audition.value) {
+                    value.star = floor(piecewiseLinearInterpolation(
+                        [[0, 0], ...audition.value?.score_to_star],
+                        total_score
+                    ))
+                }
+
                 if (!is_first.value) {
                     value.fans = 0
                 }
@@ -423,8 +441,10 @@ const recommend_score_table = computed(() => {
                         if (parameters.value[key] === null) return score
                         parameter[key] += parameters.value[key]
 
-                        if (key !== "fans") {
+                        if (key !== "fans" && key !== "star") {
                             parameter[key] = Math.min(parameter[key], difficulty.max_parameter ?? 0)
+                        } else if (key === "star") {
+                            parameter[key] = Math.min(parameter[key], difficulty.enhanced_month.max_star ?? 0)
                         }
                     }
 
@@ -432,11 +452,9 @@ const recommend_score_table = computed(() => {
                         + floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], parameter.fans))
 
                     if (is_enhanced_week.value) {
-                        if (star.value === null) {
-                            return -1
-                        }
-                        score = floor(score * 0.7) + floor(star.value * 10.82)
+                        score = floor(score * 0.7) + floor(parameter.star * difficulty.enhanced_month.star_to_final_score_multiplier)
                     }
+
                     return score
                 }
                 const value: { [key: string]: number } = { ...score }
@@ -572,24 +590,33 @@ function selectRow(data: { [key: string]: any }) {
 }
 
 const base_increase_parameters = computed(() => {
-    const value: { [key: string]: number } = { fans: 0 }
+    const value: { [key: string]: number } = { fans: 0, star: -1 }
+    let total_score = 0
     for (const key of PARAMETER.NAMES) {
         if (scores.value[key] === null || !idol.value) {
             value[key] = -1
-            value.fans = -1
+            total_score = -1
         }
         else {
             value[key] = floor(piecewiseLinearInterpolation(
                 [[0, 0], ...(stage.value as { [key: string]: any })[idol.value.type][idol.value.specialty[key].toString()]],
                 scores.value[key]
             ))
-            value.fans = value.fans === -1 ? -1 : (value.fans + scores.value[key])
+            total_score = total_score === -1 ? -1 : (total_score + scores.value[key])
         }
     }
-    value.fans = value.fans === -1 ? -1 : floor(piecewiseLinearInterpolation(
+    value.fans = total_score === -1 ? -1 : floor(piecewiseLinearInterpolation(
         (stage.value as { [key: string]: any }).score_to_fans,
-        value.fans
+        total_score
     ))
+
+    if (is_enhanced_week.value && audition.value) {
+        value.star = total_score === -1 ? -1 : floor(piecewiseLinearInterpolation(
+            [[0, 0], ...audition.value?.score_to_star],
+            total_score
+        ))
+    }
+
     if (!is_first.value) {
         value.fans = 0
     }
@@ -621,7 +648,7 @@ const initial_item_bonu_increase_parameters = computed(() => {
 })
 
 const increase_parameters = computed(() => {
-    const value: { [key: string]: number } = { "fans": base_increase_parameters.value.fans }
+    const value: { [key: string]: number } = { fans: base_increase_parameters.value.fans, star: base_increase_parameters.value.star }
     for (const key of PARAMETER.NAMES) {
         if (parameter_bonus.value[key] === null || initial_item_bonus.value === null || scores.value[key] === null) {
             value[key] = -1
@@ -636,14 +663,16 @@ const increase_parameters = computed(() => {
 
 const final_parameters = computed(() => {
     const value: { [key: string]: number } = {}
-    for (const key of [...PARAMETER.NAMES, 'fans']) {
+    for (const key of [...PARAMETER.NAMES, 'fans', 'star']) {
         if (parameters.value[key] === null || increase_parameters.value[key] === -1) {
             value[key] = -1
         }
         else {
             value[key] = parameters.value[key] + increase_parameters.value[key]
-            if (key !== 'fans') {
+            if (key !== 'fans' && key !== 'star') {
                 value[key] = Math.min(value[key], difficulty.max_parameter ?? 0)
+            } else if (key === 'star') {
+                value[key] = Math.min(value[key], difficulty.enhanced_month.max_star ?? 0)
             }
         }
     }
@@ -662,11 +691,12 @@ const final_score = computed(() => {
         + floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], final_parameters.value.fans))
 
     if (is_enhanced_week.value) {
-        if (star.value === null) {
+        if (final_parameters.value.star === -1) {
             return -1
         }
-        score = floor(score * 0.7) + floor(star.value * 10.82)
+        score = floor(score * 0.7) + floor(final_parameters.value.star * difficulty.enhanced_month.star_to_final_score_multiplier)
     }
+
     return score
 })
 </script>
