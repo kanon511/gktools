@@ -4,19 +4,49 @@
             "id": 1,
             "name": "普通",
             "max_parameter": 1000,
-            "high_score": 100000
+            "high_score": 100000,
+            "enhanced_month": {
+                "score_to_star": [
+                    [
+                        5986,
+                        150
+                    ]
+                ],
+                "max_star": 515,
+                "star_to_final_score_multiplier": 8.4622
+            }
         },
         {
             "id": 2,
             "name": "Pro",
             "max_parameter": 1500,
-            "high_score": 250000
+            "high_score": 250000,
+            "enhanced_month": {
+                "score_to_star": [
+                    [
+                        12000,
+                        150
+                    ]
+                ],
+                "max_star": 520,
+                "star_to_final_score_multiplier": 9.9
+            }
         },
         {
             "id": 3,
             "name": "Master",
             "max_parameter": 1800,
-            "high_score": 500000
+            "high_score": 500000,
+            "enhanced_month": {
+                "score_to_star": [
+                    [
+                        18000,
+                        150
+                    ]
+                ],
+                "max_star": 580,
+                "star_to_final_score_multiplier": 10.56
+            }
         }
     ],
     "score_to_final_score": [

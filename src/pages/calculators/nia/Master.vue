@@ -10,7 +10,7 @@
                         <p class="mr-2">强化月间·星</p>
                         <ToggleSwitch v-model="is_enhanced_week" />
                         <IconTooltip class="ml-2">
-                            <p>除了mas的期末试镜以外，其他试镜的星星数的计算有比较大的误差，特别是得分未达到星星数上限要求时。</p>
+                            <p>除了期末试镜以外，其他试镜的星星数的计算有比较大的误差，特别是得分未达到星星数上限要求时。</p>
                         </IconTooltip>
                     </div>
                     <p>倍率</p>

@@ -1,5 +1,18 @@
+import { PARAMETER } from "@/constants"
+
 export function dictionarySum(dict: { [key: string]: number }) {
     return Object.values(dict).reduce((acc, val) => acc + val, 0);
+}
+
+export function parameterSum(dict: { [key: string]: number }) {
+    let sum = 0;
+    for (const key of PARAMETER.NAMES) {
+        if (dict[key] === undefined) {
+            return undefined;
+        }
+        sum += dict[key];
+    }
+    return sum;
 }
 
 export function piecewiseLinearInterpolation(points: [number, number][], x: number): number {
