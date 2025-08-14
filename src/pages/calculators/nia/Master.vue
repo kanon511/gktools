@@ -5,7 +5,7 @@
                 <template #content>
                     <ModeSelect :select_id="2" />
                     <DifficultySelect :select_id="2" :difficulty_options="difficulty_options" />
-                    <IdolSelect class="my-4" ref="idol_select_ref" />
+                    <IdolSelect class="mt-4" ref="idol_select_ref" />
                     <div class="flex flex-row items-center mb-2">
                         <p class="mr-2">强化月间·星</p>
                         <ToggleSwitch v-model="is_enhanced_week" />
@@ -46,8 +46,6 @@
                         optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
                     <StageScoreInfoTable :idol="idol" :stage="stage" :is_enhanced_month="is_enhanced_week"
                         :score_to_star="audition?.score_to_star" />
-                    <p>试镜中得分</p>
-                    <ParameterInput :parameters="scores" />
                     <!-- <p>是否为一位</p>
                     <SelectButton class="my-2" v-model="is_first" :options="boolean_options" optionLabel="name"
                         optionValue="value" optionDisabled="disabled" :allowEmpty="false" fluid /> -->
@@ -58,6 +56,8 @@
         <div class="flex flex-col items-center w-full max-w-[600px] xl:ml-4">
             <Card class="mt-4 w-full">
                 <template #content>
+                    <p>试镜中得分</p>
+                    <ParameterInput :parameters="scores" />
                     <Panel header="推荐得分表" toggleable>
                         <div class="flex flex-row items-center">
                             <p>优先选项</p>
@@ -280,7 +280,10 @@ const difficulty: NiaMasData = await fetch(import.meta.env.VITE_DATA_URL + (diff
 const is_enhanced_week = ref(false)
 
 const idol_select_ref = ref()
-const idol = computed(() => idol_select_ref.value?.select_option)
+const idol = computed(() => {
+    if (!idol_select_ref.value?.select_option || idol_select_ref.value?.select_option.name === "") return null
+    return idol_select_ref.value?.select_option
+})
 
 const parameter_bonus = ref<{ [key: string]: number | null }>({
     vocal: null,

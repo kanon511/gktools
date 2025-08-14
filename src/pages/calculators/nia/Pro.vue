@@ -5,17 +5,21 @@
                 <template #content>
                     <ModeSelect :select_id="2" />
                     <DifficultySelect :select_id="1" :difficulty_options="difficulty_options" />
-                    <div class="flex flex-row my-4">
-                        <IdolSelect class="flex-3/4" ref="idol_select_ref" />
-                        <FloatLabel class="ml-2 flex-1/4" variant="on">
+                    <IdolSelect class="mt-4" ref="idol_select_ref" />
+                    <div class="flex flex-row items-center mb-2">
+                        <p>倍率&好感度</p>
+                        <IconTooltip class="ml-2">
+                            <p>好感度大于20时，视为20。</p>
+                        </IconTooltip>
+                    </div>
+                    <ParameterMultipleInput :parameters="parameter_bonus">
+                        <FloatLabel class="ml-2" variant="on">
                             <InputNumber v-model="favorable" :useGrouping="false"
                                 :invalid="favorable === null || difficulty.favorable_fans_bonus_percentage[favorable.toString()] === undefined"
                                 fluid />
                             <label for="on_label">好感度</label>
                         </FloatLabel>
-                    </div>
-                    <p>倍率</p>
-                    <ParameterMultipleInput :parameters="parameter_bonus" />
+                    </ParameterMultipleInput>
                 </template>
             </Card>
             <Card class="mt-4 w-full">
@@ -158,7 +162,10 @@ const difficulty: NiaMasData = await fetch(import.meta.env.VITE_DATA_URL + (diff
     .then(res => res.json())
 
 const idol_select_ref = ref()
-const idol = computed(() => idol_select_ref.value?.select_option)
+const idol = computed(() => {
+    if (!idol_select_ref.value?.select_option || idol_select_ref.value?.select_option.name === "") return null
+    return idol_select_ref.value?.select_option
+})
 const favorable = ref(difficulty.favorable_fans_bonus_percentage.default ?
     difficulty.favorable_fans_bonus_percentage.default : 0)
 const favorable_fans_bonus = computed(() => {

@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "花海咲季",
-        "icon": "",
+        "icon": "1.png",
         "type": "balance",
         "specialty": {
             "vocal": 3,
@@ -13,7 +13,7 @@
     {
         "id": 2,
         "name": "月村手毬",
-        "icon": "",
+        "icon": "2.png",
         "type": "radical",
         "specialty": {
             "vocal": 1,
@@ -24,7 +24,7 @@
     {
         "id": 3,
         "name": "藤田琴音",
-        "icon": "",
+        "icon": "3.png",
         "type": "radical",
         "specialty": {
             "vocal": 3,
@@ -35,7 +35,7 @@
     {
         "id": 4,
         "name": "有村麻央",
-        "icon": "",
+        "icon": "4.png",
         "type": "radical",
         "specialty": {
             "vocal": 1,
@@ -46,7 +46,7 @@
     {
         "id": 5,
         "name": "葛城莉莉娅",
-        "icon": "",
+        "icon": "5.png",
         "type": "balance",
         "specialty": {
             "vocal": 3,
@@ -57,7 +57,7 @@
     {
         "id": 6,
         "name": "仓本千奈",
-        "icon": "",
+        "icon": "6.png",
         "type": "radical",
         "specialty": {
             "vocal": 3,
@@ -68,7 +68,7 @@
     {
         "id": 7,
         "name": "紫云清夏",
-        "icon": "",
+        "icon": "7.png",
         "type": "radical",
         "specialty": {
             "vocal": 3,
@@ -79,7 +79,7 @@
     {
         "id": 8,
         "name": "篠泽广",
-        "icon": "",
+        "icon": "8.png",
         "type": "balance",
         "specialty": {
             "vocal": 1,
@@ -90,7 +90,7 @@
     {
         "id": 9,
         "name": "姬崎莉波",
-        "icon": "",
+        "icon": "9.png",
         "type": "balance",
         "specialty": {
             "vocal": 3,
@@ -101,7 +101,7 @@
     {
         "id": 10,
         "name": "花海佑芽",
-        "icon": "",
+        "icon": "10.png",
         "type": "balance",
         "specialty": {
             "vocal": 3,
@@ -112,7 +112,7 @@
     {
         "id": 11,
         "name": "十王星南",
-        "icon": "",
+        "icon": "11.png",
         "type": "balance",
         "specialty": {
             "vocal": 2,
@@ -123,7 +123,7 @@
     {
         "id": 12,
         "name": "秦谷美铃",
-        "icon": "",
+        "icon": "12.png",
         "type": "radical",
         "specialty": {
             "vocal": 1,
