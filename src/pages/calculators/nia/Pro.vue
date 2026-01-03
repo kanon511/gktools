@@ -122,9 +122,12 @@
                 </template>
             </Card>
             <p class="mt-4">
-                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。反馈错误或建议请加QQ群：262823155。<br>
-                ※ 数据来源：<a class="text-blue-400" href="https://seesaawiki.jp/gakumasu/d/N.I.A" target="_blank">WIKI</a>
-                By
+                ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。反馈错误或建议请
+                <a class="text-blue-400" href="https://github.com/kanon511/gktools/issues/new"
+                    target="_blank">提交issue</a>
+                或加QQ群：262823155。<br>
+                ※ 数据来源：<a class="text-blue-400" href="https://seesaawiki.jp/gakumasu/d/N.I.A/%a5%de%a5%b9%a5%bf%a1%bc"
+                    target="_blank">Seesaa WIKI</a> By
                 Kanon511
             </p>
         </div>

@@ -10,7 +10,7 @@ const routes: RouteRecordRaw[] = [
     {
         name: "Calculator",
         path: "/calculator",
-        redirect: { name: "NiaMasCalculator" },
+        redirect: { name: "HatsuCalculator" },
         children: [
             {
                 path: "hatsu",
