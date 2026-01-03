@@ -330,8 +330,8 @@ const recommend_score_table = computed(() => {
                             [[0, 0], ...(stage as { [key: string]: any })[idol.value.type][idol.value.specialty[key].toString()]],
                             score[key]
                         ))
-                        value[key] += floor(value[key] * parameter_bonus.value[key] / 100) +
-                            floor(value[key] * initial_item_bonus.value / 100)
+                        value[key] += floor(value[key] * parameter_bonus.value[key] / 100)
+                        value[key] += floor(value[key] * initial_item_bonus.value / 100)
                         total_score += score[key]
                     }
                 }
@@ -594,7 +594,7 @@ const initial_item_bonu_increase_parameters = computed(() => {
         if (base_increase_parameters.value[key] === -1 || initial_item_bonus.value === null) {
             value[key] = -1
         } else {
-            value[key] = floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
+            value[key] = floor((base_increase_parameters.value[key] + bonu_increase_parameters.value[key]) * initial_item_bonus.value / 100)
         }
     }
     return value
@@ -606,9 +606,9 @@ const increase_parameters = computed(() => {
         if (parameter_bonus.value[key] === null || initial_item_bonus.value === null || scores.value[key] === null) {
             value[key] = -1
         } else {
-            value[key] = base_increase_parameters.value[key]
-                + floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)
-                + floor(base_increase_parameters.value[key] * initial_item_bonus.value / 100)
+            value[key] = floor((base_increase_parameters.value[key]
+                + floor(base_increase_parameters.value[key] * parameter_bonus.value[key] / 100)) *
+                (1 + initial_item_bonus.value / 100))
         }
     }
     return value
