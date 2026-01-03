@@ -141,7 +141,7 @@ const mode_external_data: HatsuData = await fetch(import.meta.env.VITE_DATA_URL 
     .then(res => res.json())
 
 const difficulty_options = computed(() => mode_external_data.difficulty)
-const difficulty_select = ref(3)
+const difficulty_select = ref(4)
 const difficulty = computed(() => difficulty_options.value ? difficulty_options.value.find(item => item.id === difficulty_select.value) : null)
 
 const is_has_midterm = computed(() => difficulty.value?.midterm_score_to_final_score !== undefined)
