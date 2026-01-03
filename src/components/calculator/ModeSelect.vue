@@ -1,7 +1,9 @@
 <template>
-    <p>剧本</p>
-    <SelectButton class="my-2" v-model="mode_id" :options="mode_options" optionLabel="name" optionValue="id"
-        optionDisabled="disabled" :allowEmpty="false" fluid />
+    <div class="flex flex-col w-full">
+        <p>剧本</p>
+        <SelectButton class="my-2" v-model="mode_id" :options="mode_options" optionLabel="name" optionValue="id"
+            optionDisabled="disabled" :allowEmpty="false" fluid />
+    </div>
 </template>
 
 <script setup lang="ts">

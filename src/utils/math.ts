@@ -41,15 +41,15 @@ export function piecewiseLinearInterpolation(points: [number, number][], x: numb
     throw new Error("未能找到对应的插值区间");
 }
 
-export function inversePiecewiseLinearInterpolation(points: [number, number][], y: number): number {
+export function inversePiecewiseLinearInterpolation(points: [number, number][], y: number): number | null {
     // 按y升序排序，确保函数单调（若不单调，逆函数可能不唯一）
     const sortedPoints = points.slice().sort((a, b) => a[1] - b[1]);
 
     // 限制y在边界内
-    if (y <= sortedPoints[0][1]) {
-        return sortedPoints[0][0];
-    } else if (y >= sortedPoints[sortedPoints.length - 1][1]) {
-        return sortedPoints[sortedPoints.length - 1][0];
+    if (y < sortedPoints[0][1]) {
+        return null;
+    } else if (y > sortedPoints[sortedPoints.length - 1][1]) {
+        return null;
     }
 
     // 查找 y 所在的区间

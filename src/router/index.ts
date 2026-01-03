@@ -36,6 +36,11 @@ const routes: RouteRecordRaw[] = [
             }
         ]
     },
+    {
+        name: "Simulator",
+        path: "/simulator",
+        component: () => import("@/pages/simulator/Simulator.vue"),
+    },
 
     {
         name: "NotFound",

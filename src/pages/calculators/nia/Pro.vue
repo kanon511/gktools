@@ -3,9 +3,11 @@
         <div class="flex flex-col items-center w-full max-w-[600px]">
             <Card class="mt-4 w-full">
                 <template #content>
-                    <ModeSelect :select_id="2" />
-                    <DifficultySelect :select_id="1" :difficulty_options="difficulty_options" />
-                    <IdolSelect class="mt-4" ref="idol_select_ref" />
+                    <div class="flex flex-row items-center">
+                        <ModeSelect class="mr-2" :select_id="2" />
+                        <DifficultySelect :select_id="1" :difficulty_options="difficulty_options" />
+                    </div>
+                    <IdolSelect class="mt-4" v-model="idol" :idol_id="idol_select" />
                     <div class="flex flex-row items-center mb-2">
                         <p>倍率&好感度</p>
                         <IconTooltip class="ml-2">
@@ -121,7 +123,9 @@
             </Card>
             <p class="mt-4">
                 ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。反馈错误或建议请加QQ群：262823155。<br>
-                ※ 数据来源：<a href="https://seesaawiki.jp/gakumasu/d/N.I.A" target="_blank">WIKI</a> By Kanon511
+                ※ 数据来源：<a class="text-blue-400" href="https://seesaawiki.jp/gakumasu/d/N.I.A" target="_blank">WIKI</a>
+                By
+                Kanon511
             </p>
         </div>
     </div>
@@ -161,11 +165,8 @@ const difficulty_data = computed(() => difficulty_options.value ? difficulty_opt
 const difficulty: NiaMasData = await fetch(import.meta.env.VITE_DATA_URL + (difficulty_data.value ? difficulty_data.value.data_path : ""))
     .then(res => res.json())
 
-const idol_select_ref = ref()
-const idol = computed(() => {
-    if (!idol_select_ref.value?.select_option || idol_select_ref.value?.select_option.name === "") return null
-    return idol_select_ref.value?.select_option
-})
+const idol_select = ref()
+const idol = ref()
 const favorable = ref(difficulty.favorable_fans_bonus_percentage.default ?
     difficulty.favorable_fans_bonus_percentage.default : 0)
 const favorable_fans_bonus = computed(() => {

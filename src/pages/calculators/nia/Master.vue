@@ -3,12 +3,14 @@
         <div class="flex flex-col items-center w-full max-w-[600px]">
             <Card class="mt-4 w-full">
                 <template #content>
-                    <ModeSelect :select_id="2" />
-                    <DifficultySelect :select_id="2" :difficulty_options="difficulty_options" />
-                    <IdolSelect class="mt-4" ref="idol_select_ref" />
+                    <div class="flex flex-row items-center">
+                        <ModeSelect class="mr-2" :select_id="2" />
+                        <DifficultySelect :select_id="2" :difficulty_options="difficulty_options" />
+                    </div>
+                    <IdolSelect class="mt-4" v-model="idol" :idol_id="idol_select" />
                     <div class="flex flex-row items-center mb-2">
                         <p class="mr-2">强化月间·星</p>
-                        <ToggleSwitch v-model="is_enhanced_week" />
+                        <ToggleSwitch v-model="is_enhanced_month" />
                         <IconTooltip class="ml-2">
                             <p>除了期末试镜以外，其他试镜的星星数的计算有比较大的误差，特别是得分未达到星星数上限要求时。</p>
                         </IconTooltip>
@@ -32,7 +34,7 @@
                                 :invalid="parameters.fans === null" fluid />
                             <label for="on_label">粉丝数</label>
                         </FloatLabel>
-                        <FloatLabel class="ml-2" variant="on" v-if="is_enhanced_week">
+                        <FloatLabel class="ml-2" variant="on" v-if="is_enhanced_month">
                             <InputNumber v-model="parameters.star" :useGrouping="false"
                                 :invalid="parameters.star === null" fluid />
                             <label for="on_label">星星数</label>
@@ -44,7 +46,7 @@
                     <p>舞台</p>
                     <SelectButton class="my-2" v-model="stage_select" :options="stage_options" optionLabel="name"
                         optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
-                    <StageScoreInfoTable :idol="idol" :stage="stage" :is_enhanced_month="is_enhanced_week"
+                    <StageScoreInfoTable :idol="idol" :stage="stage" :is_enhanced_month="is_enhanced_month"
                         :score_to_star="audition?.score_to_star" />
                     <!-- <p>是否为一位</p>
                     <SelectButton class="my-2" v-model="is_first" :options="boolean_options" optionLabel="name"
@@ -69,37 +71,6 @@
                         </div>
                         <SelectButton class="my-2" v-model="priority_select" :options="priority_options"
                             optionLabel="name" optionValue="id" optionDisabled="disabled" :allowEmpty="false" fluid />
-                        <!-- <p>试镜中倍率</p>
-                        <ParameterMultipleInput :parameters="stage_score_bonus" />
-                        <div class="flex flex-row items-center mb-2">
-                            <p>卡组类型</p>
-                            <IconTooltip class="ml-2">
-                                <p>用于设置卡组被动得分占比的预设值，如果卡组体系较为复杂，请使用高级选项。<br>
-                                    不设置类型视为没有卡组被动得分。
-                                </p>
-                            </IconTooltip>
-                            <FloatLabel variant="on" class="w-1/4 mx-2">
-                                <Select class="w-full" v-model="average_score_multiplier_select"
-                                    :options="average_score_multiplier_options" optionLabel="name" optionValue="id" />
-                                <label for="on_label">类型</label>
-                            </FloatLabel>
-                            <p class="mr-2">高级选项</p>
-                            <ToggleSwitch v-model="is_average_score_multiplier_option" />
-                        </div>
-                        <div class="flex flex-row items-center mb-2" v-if="is_average_score_multiplier_option">
-                            <p class="w-28">卡组被动得分占比</p>
-                            <IconTooltip class="ml-2">
-                                <p>卡组在各回合中被动得分在总得分中的占比，如果不会设置请使用预设值。<br>
-                                    仅对预期得分的推测有略微影响，设置适当可以提高推测的合理性。<br>
-                                    被动/不可操控的得分越高，得分越平均，该值越高，例如好印象。<br>
-                                    主动/可操控的得分越高，得分越极端，该值越低，例如干劲。<br>
-                                </p>
-                            </IconTooltip>
-                            <Slider v-model="average_score_multiplier" :step="0.01" :max="1" class="w-full mx-4" />
-                            <div class="w-32">
-                                <InputNumber v-model="average_score_multiplier" :useGrouping="false" fluid />
-                            </div>
-                        </div> -->
                         <p>推荐得分</p>
                         <DataTable class="text-sm" :value="recommend_score_table" size="small" stripedRows
                             rowGroupMode="rowspan" groupRowsBy="name">
@@ -140,7 +111,7 @@
             </Card>
             <Card class="mt-4 w-full">
                 <template #content>
-                    <p>试镜获得属性 (vo/da/vi/粉丝数{{ is_enhanced_week ? '/星星数' : '' }})</p>
+                    <p>试镜获得属性 (vo/da/vi/粉丝数{{ is_enhanced_month ? '/星星数' : '' }})</p>
                     <div class="flex flex-row mt-2">
                         <TextCard theme="red">
                             {{ increase_parameters.vocal !== -1 ? '+' + increase_parameters.vocal : '-' }}
@@ -154,7 +125,7 @@
                         <TextCard theme="green">
                             {{ increase_parameters.fans !== -1 ? '+' + increase_parameters.fans : '-' }}
                         </TextCard>
-                        <TextCard v-if="is_enhanced_week" theme="purple">
+                        <TextCard v-if="is_enhanced_month" theme="purple">
                             {{ increase_parameters.star !== -1 ? '+' + increase_parameters.star : '-' }}
                         </TextCard>
                     </div>
@@ -202,7 +173,7 @@
                             </TextCard>
                         </div>
                     </Panel>
-                    <p class="mt-2">最终属性 (vo/da/vi/粉丝数{{ is_enhanced_week ? '/星星数' : '' }})</p>
+                    <p class="mt-2">最终属性 (vo/da/vi/粉丝数{{ is_enhanced_month ? '/星星数' : '' }})</p>
                     <div class="flex flex-row mt-2">
                         <TextCard theme="red">
                             {{ final_parameters.vocal !== -1 ? final_parameters.vocal : '-' }}
@@ -216,7 +187,7 @@
                         <TextCard theme="green">
                             {{ final_parameters.fans !== -1 ? final_parameters.fans : '-' }}
                         </TextCard>
-                        <TextCard v-if="is_enhanced_week" theme="purple">
+                        <TextCard v-if="is_enhanced_month" theme="purple">
                             {{ final_parameters.star !== -1 ? final_parameters.star : '-' }}
                         </TextCard>
                     </div>
@@ -225,8 +196,8 @@
             </Card>
             <p class="mt-4">
                 ※ 计算公式正在测试中，不能保证准确性。为了验证准确性，麻烦请使用实际训练数据进行测试，并核对结果。反馈错误或建议请加QQ群：262823155。<br>
-                ※ 数据来源：<a href="https://seesaawiki.jp/gakumasu/d/N.I.A/%a5%de%a5%b9%a5%bf%a1%bc"
-                    target="_blank">WIKI</a> By
+                ※ 数据来源：<a class="text-blue-400" href="https://seesaawiki.jp/gakumasu/d/N.I.A/%a5%de%a5%b9%a5%bf%a1%bc"
+                    target="_blank">Seesaa WIKI</a> By
                 Kanon511
             </p>
         </div>
@@ -263,7 +234,6 @@ import { PARAMETER } from '@/constants'
 import ToggleSwitch from 'primevue/toggleswitch';
 
 import mode_data from '@/data/mode.json'
-// import average_score_multiplier_data from '@/data/player_cards_type.json'
 
 const rank_data: { [key: string]: number } = await fetch(import.meta.env.VITE_DATA_URL + "rank.json")
     .then(res => res.json())
@@ -277,13 +247,10 @@ const difficulty_data = computed(() => difficulty_options.value ? difficulty_opt
 const difficulty: NiaMasData = await fetch(import.meta.env.VITE_DATA_URL + (difficulty_data.value ? difficulty_data.value.data_path : ""))
     .then(res => res.json())
 
-const is_enhanced_week = ref(false)
+const idol_select = ref()
+const idol = ref()
 
-const idol_select_ref = ref()
-const idol = computed(() => {
-    if (!idol_select_ref.value?.select_option || idol_select_ref.value?.select_option.name === "") return null
-    return idol_select_ref.value?.select_option
-})
+const is_enhanced_month = ref(false)
 
 const parameter_bonus = ref<{ [key: string]: number | null }>({
     vocal: null,
@@ -320,22 +287,33 @@ const scores = ref<{ [key: string]: number | null }>({
 
 const is_first = ref(true)
 
+// const pinia_data = computed(() => {
+//     return {
+//         is_enhanced_month: is_enhanced_month.value,
+//         idol_id: idol.value?.id,
+//         parameter_bonus: { ...parameter_bonus.value },
+//         initial_item_bonus: initial_item_bonus.value,
+//         parameters: { ...parameters.value },
+//         audition_id: audition_select.value,
+//         stage_id: stage_select.value,
+//         scores: { ...scores.value },
+//         // is_first
+//     }
+// })
+// watch(pinia_data, (value) => {
+//     console.log(value)
+// })
+
 const priority_options = ref([
     { id: 1, name: '低得分要求优先' },
     { id: 2, name: '高结算属性优先' },
 ])
 const priority_select = ref(priority_options.value[0].id)
 
-// const stage_score_bonus = ref({
-//     vocal: null,
-//     dance: null,
-//     visual: null,
-// })
-
 const recommend_score_table = computed(() => {
     const value = []
     if (!idol.value || parameters.value.fans === null || initial_item_bonus.value === null) return []
-    if (is_enhanced_week.value && parameters.value.star === null) return []
+    if (is_enhanced_month.value && parameters.value.star === null) return []
     for (const rank in rank_data) {
         let rank_value
         for (const stage of stage_options.value) {
@@ -363,7 +341,7 @@ const recommend_score_table = computed(() => {
                     total_score
                 ))
 
-                if (is_enhanced_week.value && audition.value) {
+                if (is_enhanced_month.value && audition.value) {
                     value.star = floor(piecewiseLinearInterpolation(
                         [[0, 0], ...audition.value?.score_to_star],
                         total_score
@@ -454,7 +432,7 @@ const recommend_score_table = computed(() => {
                     score = floor((parameter.vocal + parameter.dance + parameter.visual) * 2.3)
                         + floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], parameter.fans))
 
-                    if (is_enhanced_week.value) {
+                    if (is_enhanced_month.value) {
                         score = floor(score * 0.7) + floor(parameter.star * difficulty.enhanced_month.star_to_final_score_multiplier)
                     }
 
@@ -502,16 +480,6 @@ const recommend_score_table = computed(() => {
                 }
 
                 if (max_score >= rank_data[rank]) {
-                    // const raw_score = calculate_score(score)
-                    // if (rank_data[rank] <= raw_score) {
-                    //     return { ...score }
-                    // }
-                    // const growth_rate = (max_score - raw_score) / max_add_score
-                    // const add_score = (rank_data[rank] - raw_score) / growth_rate
-                    // console.log(growth_rate, max_score, raw_score, max_add_score, add_score, rank_data[rank], "run_func1")
-                    // const value: { [key: string]: number } = { ...score }
-                    // value[max_growth_rate_parameter.name] += floor(add_score)
-                    // return value
                     return calculate_final_score(score, max_add_score)
                 }
                 else {
@@ -566,24 +534,6 @@ const recommend_score_table = computed(() => {
     return value
 })
 
-// const average_score_multiplier_options = ref(average_score_multiplier_data)
-// const average_score_multiplier_select = ref()
-// const average_score_multiplier = ref(0)
-// watch(average_score_multiplier_select, (new_value) => {
-//     const value = average_score_multiplier_options.value.find(item => item.id === new_value)
-//     if (value) {
-//         average_score_multiplier.value = value.average_score_multiplier
-//     }
-// })
-
-// const is_average_score_multiplier_option = ref(false)
-// watch(is_average_score_multiplier_option, () => {
-//     const value = average_score_multiplier_options.value.find(item => item.id === average_score_multiplier_select.value)
-//     if (value) {
-//         average_score_multiplier.value = value.average_score_multiplier
-//     }
-// })
-
 function selectRow(data: { [key: string]: any }) {
     for (const key of PARAMETER.NAMES) {
         scores.value[key] = data[key]
@@ -613,7 +563,7 @@ const base_increase_parameters = computed(() => {
         total_score
     ))
 
-    if (is_enhanced_week.value && audition.value) {
+    if (is_enhanced_month.value && audition.value) {
         value.star = total_score === -1 ? -1 : floor(piecewiseLinearInterpolation(
             [[0, 0], ...audition.value?.score_to_star],
             total_score
@@ -693,7 +643,7 @@ const final_score = computed(() => {
     score = floor((final_parameters.value.vocal + final_parameters.value.dance + final_parameters.value.visual) * 2.3)
         + floor(piecewiseLinearInterpolation([[0, 0], ...(difficulty.fans_to_final_score as [])], final_parameters.value.fans))
 
-    if (is_enhanced_week.value) {
+    if (is_enhanced_month.value) {
         if (final_parameters.value.star === -1) {
             return -1
         }

@@ -104,9 +104,9 @@
         "icon": "10.png",
         "type": "balance",
         "specialty": {
-            "vocal": 3,
-            "dance": 2,
-            "visual": 1
+            "vocal": 2,
+            "dance": 1,
+            "visual": 3
         }
     },
     {

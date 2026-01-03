@@ -5,6 +5,55 @@
             "name": "普通",
             "max_parameter": 1000,
             "high_score": 100000,
+            "parameters_to_final_score_multiplier": 2.3,
+            "endterm_score_to_final_score": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    5000,
+                    1500
+                ],
+                [
+                    10000,
+                    2250
+                ],
+                [
+                    20000,
+                    3050
+                ],
+                [
+                    30000,
+                    3450
+                ],
+                [
+                    40000,
+                    3650
+                ],
+                [
+                    200000,
+                    5250
+                ]
+            ],
+            "rank_bonus": [
+                {
+                    "parameter": 30,
+                    "score": 1700
+                },
+                {
+                    "parameter": 20,
+                    "score": 900
+                },
+                {
+                    "parameter": 10,
+                    "score": 500
+                },
+                {
+                    "parameter": 0,
+                    "score": 0
+                }
+            ],
             "enhanced_month": {
                 "score_to_star": [
                     [
@@ -21,6 +70,55 @@
             "name": "Pro",
             "max_parameter": 1500,
             "high_score": 250000,
+            "parameters_to_final_score_multiplier": 2.3,
+            "endterm_score_to_final_score": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    5000,
+                    1500
+                ],
+                [
+                    10000,
+                    2250
+                ],
+                [
+                    20000,
+                    3050
+                ],
+                [
+                    30000,
+                    3450
+                ],
+                [
+                    40000,
+                    3650
+                ],
+                [
+                    200000,
+                    5250
+                ]
+            ],
+            "rank_bonus": [
+                {
+                    "parameter": 30,
+                    "score": 1700
+                },
+                {
+                    "parameter": 20,
+                    "score": 900
+                },
+                {
+                    "parameter": 10,
+                    "score": 500
+                },
+                {
+                    "parameter": 0,
+                    "score": 0
+                }
+            ],
             "enhanced_month": {
                 "score_to_star": [
                     [
@@ -37,6 +135,55 @@
             "name": "Master",
             "max_parameter": 1800,
             "high_score": 500000,
+            "parameters_to_final_score_multiplier": 2.3,
+            "endterm_score_to_final_score": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    5000,
+                    1500
+                ],
+                [
+                    10000,
+                    2250
+                ],
+                [
+                    20000,
+                    3050
+                ],
+                [
+                    30000,
+                    3450
+                ],
+                [
+                    40000,
+                    3650
+                ],
+                [
+                    200000,
+                    5250
+                ]
+            ],
+            "rank_bonus": [
+                {
+                    "parameter": 30,
+                    "score": 1700
+                },
+                {
+                    "parameter": 20,
+                    "score": 900
+                },
+                {
+                    "parameter": 10,
+                    "score": 500
+                },
+                {
+                    "parameter": 0,
+                    "score": 0
+                }
+            ],
             "enhanced_month": {
                 "score_to_star": [
                     [
@@ -47,54 +194,79 @@
                 "max_star": 580,
                 "star_to_final_score_multiplier": 10.56
             }
-        }
-    ],
-    "score_to_final_score": [
-        [
-            0,
-            0
-        ],
-        [
-            5000,
-            1500
-        ],
-        [
-            10000,
-            2250
-        ],
-        [
-            20000,
-            3050
-        ],
-        [
-            30000,
-            3450
-        ],
-        [
-            40000,
-            3650
-        ],
-        [
-            1000000000000,
-            10000003250
-        ]
-    ],
-    "rank_bonus": [
-        {
-            "parameter": 30,
-            "score": 1700
         },
         {
-            "parameter": 20,
-            "score": 900
-        },
-        {
-            "parameter": 10,
-            "score": 500
-        },
-        {
-            "parameter": 0,
-            "score": 0
+            "id": 4,
+            "name": "Legend",
+            "max_parameter": 2800,
+            "high_score": 1000000,
+            "parameters_to_final_score_multiplier": 2.1,
+            "midterm_score_to_final_score": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    30000,
+                    2400
+                ],
+                [
+                    40000,
+                    2480
+                ],
+                [
+                    50000,
+                    2510
+                ],
+                [
+                    60000,
+                    2530
+                ],
+                [
+                    200000,
+                    2670
+                ]
+            ],
+            "endterm_score_to_final_score": [
+                [
+                    0,
+                    0
+                ],
+                [
+                    400000,
+                    7200
+                ],
+                [
+                    500000,
+                    8200
+                ],
+                [
+                    600000,
+                    9000
+                ],
+                [
+                    2000000,
+                    10400
+                ]
+            ],
+            "rank_bonus": [
+                {
+                    "parameter": 120,
+                    "score": 1700
+                },
+                {
+                    "parameter": 100,
+                    "score": 900
+                },
+                {
+                    "parameter": 80,
+                    "score": 500
+                },
+                {
+                    "parameter": 0,
+                    "score": 0
+                }
+            ]
         }
     ]
 }

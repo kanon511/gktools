@@ -2,7 +2,7 @@
     <Menubar :model="items" breakpoint="300px">
         <template #start>
             <router-link :to="{ name: 'Home' }" class="flex items-center mx-1">
-                <Avatar image="@/../favicon.ico" shape="circle" />
+                <Avatar image="favicon.ico" shape="circle" />
             </router-link>
 
         </template>
@@ -40,5 +40,10 @@ const items = ref([
         icon: 'pi pi-calculator',
         route: { name: "Calculator" },
     },
+    // {
+    //     label: '竞技场模拟器',
+    //     icon: 'pi pi-calculator',
+    //     route: { name: "Simulator" },
+    // },
 ]);
 </script>
